@@ -87,13 +87,14 @@ public class AccountMaintenanceController   extends ParentControllerService {
         setModelAccount(model,accountForm);
        return ACCOUNT_VIEW; 
     }
-    @Secured({"ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"})
-    @RequestMapping(value = "/editPersonalInfo", method = RequestMethod.GET)
-    public String editPersonalInfo(Model model){
-    	PersonalInfoForm form = new PersonalInfoForm();
-    	 model.addAttribute(EDIT_PERSOANLA_INFO_FORM_OBJ, form);
-    	model.addAttribute(FORM_ACCION, FORM_EDIT_PERSOANLA_INFO);
-    	return EDIT_PERSONAL_INFO;
-    	
-    }
+
+	@Secured({ "ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN" })
+	@RequestMapping(value = "/editPersonalInfo", method = RequestMethod.GET)
+	public String editPersonalInfo(Model model) {
+		PersonalInfoForm form = new PersonalInfoForm();
+		model.addAttribute(EDIT_PERSOANLA_INFO_FORM_OBJ, form);
+		model.addAttribute(FORM_ACCION, FORM_EDIT_PERSOANLA_INFO);
+		return EDIT_PERSONAL_INFO;
+
+	}
 }
