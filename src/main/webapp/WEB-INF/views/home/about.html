@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Bootstrap Core CSS -->
+        <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+        <!-- MetisMenu CSS -->
+        <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+        <!-- Custom CSS -->
+        <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+        <!-- Custom Fonts -->
+        <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+        <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+        <!-- jQuery -->
+        <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+        <!-- Morris Charts JavaScript -->
+        <script src="" th:src="@{/resources/vendor/raphael/raphael.min.js}"></script>
+    
+        <!-- Custom Theme JavaScript -->
+        <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+</head>
+<body>
+<div th:replace="fragments/layout :: header"></div>
+<div class="container">
+    <p class="lead text-center" th:text="#{about.legend}">       
+    </p>
+</div>
+<div th:replace="fragments/layout :: footer"></div>
+</body>
+</html>

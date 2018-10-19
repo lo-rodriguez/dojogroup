@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+    <th:block th:if="${editModeStudent == false}">    
+        <title th:text="#{dashboard.student.addstudent.title}"></title>
+    </th:block>   
+    <th:block th:if="${editModeStudent == true}">    
+        <title th:text="#{dashboard.student.editstudent.title}"></title>
+    </th:block>   
+    <!-- Bootstrap Core CSS -->
+    <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <!-- MetisMenu CSS -->
+    <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+    <!-- Morris Charts CSS -->
+    <!--
+    <link href="../../../bzk/resources/vendor/morrisjs/morris.css"   th:href="@{/resources/vendor/morrisjs/morris.css}" rel="stylesheet">
+    -->
+    <!-- Custom Fonts -->
+    <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+
+    <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+    <!-- jQuery -->
+    <!--   <script src="../../../bzk/resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>-->
+    <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+    <!--Moment-->
+    <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>   
+    <!--bootstrap-datetimepicker-->
+    <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+
+    <script type="text/javascript" src="" th:src="@{/resources/moment/locate/es.js}"  charset="UTF-8"></script>
+    <script type="text/javascript" src="" th:src="@{/resources/js/bootbox.min.js}"  ></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav th:replace="fragments/components :: navMainMenu">
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <th:block th:if="${editModeStudent == false}">    
+                        <h3 class="page-header" th:text="#{dashboard.student.addstudent.form.inscription}">Formulario de inscripción del alumno</h3>
+                    </th:block>   
+                    <th:block th:if="${editModeStudent == true}">    
+                        <h3 class="page-header" th:text="#{dashboard.student.addstudent.form.edit}">Formulario de inscripción del alumno</h3>
+                    </th:block>      
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend}"></small></p>                                
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend2}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend3}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend4}"></small></p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row" id="main">
+
+                                <div class="col-md-8 order-md-1">
+                                    <form class="needs-validation" action="#" method="post"  th:action="@{${formAction}}" enctype="multipart/form-data" name="formStudent" th:object="${studentForm}"  >
+                                        <th:block th:if="${#fields.hasErrors('${studentForm.*}')}">
+                                            <div th:replace="fragments/components :: alert (type='danger', message='El formulario contiene errores. Por favor revisarlo.')">Alert</div>
+                                        </th:block>
+                                        <th:block   th:if="${not #lists.isEmpty(listError)}">
+                                            <div th:replace="fragments/components :: alert (type='danger', message='El formulario tiene errores. Compruebe la información.')">Alert</div>
+                                        </th:block>
+                                        <div class="row">
+                                            <h4 th:text="${registrationDate}"></h4>
+                                            <input type="hidden"  id="id" th:field="*{id}" value=""  />  
+                                            <th:block th:if="${editModeStudent == true}">   
+                                                <div class="alert alert-success" >
+                                                    <label th:text="#{dashboard.student.disableStudent.question}"></label>
+                                                    <input type="radio" th:field="*{status}"  th:value="3" th:text="#{answer.Yes}" th:attr="disabled=${disabled}" th:checked=${status}/>
+                                                    <input type="radio" th:field="*{status}"  th:value="1" th:text="#{answer.No}" th:checked=${status} th:attr="disabled=${disabled}"/>
+                                                </div>
+                                            </th:block>
+                                            <th:block th:if="${showImage == true}">                                            
+                                                <div class="col-md-6 mb-1 pull-right">
+                                                    <img alt="photo" th:src="@{/studentImage/{idStudent}(idStudent=${studentForm.id})}" class="img-responsive right-block" />
+                                                    <div class="card-body">
+                                                        <p class="card-text" th:text="#{dashboard.student.title.image}">Foto del estudiante</p>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                            <div class="col-md-6 mb-1">
+                                                <label for="firstName" th:text="#{dashboard.student.addstudent.form.firstName}">First name</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required th:field="*{firstName}" maxlength="40" th:attr="disabled=${disabled}" /> 
+                                            </div>
+                                            <div class="col-md-6 mb-1">
+                                                <label for="lastName" th:text="#{dashboard.student.addstudent.form.secondName}">Last name</label>
+                                                <input type="text" class="form-control" id="lastName" placeholder="" value="" th:field="*{lastName}" maxlength="40" th:attr="disabled=${disabled}" />       
+                                            </div>
+                                            <div class="col-md-6 mb-1">
+                                                <label for="lastName" th:text="#{dashboard.student.addstudent.form.Surname}">Surname</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="surname" placeholder="" value="" required th:field="*{surname}" maxlength="40" th:attr="disabled=${disabled}" />                                                 
+                                            </div>
+                                            <div class="col-md-6 mb-1">
+                                                <label for="lastName" th:text="#{dashboard.student.addstudent.form.secondSurname}">Surname2</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="surname2" placeholder="" value="" required th:field="*{surname2}" maxlength="40" th:attr="disabled=${disabled}" />                                                                                                        
+                                            </div>                                     
+
+                                            <div class="col-md-4 mb-1">                                              
+                                                <label for="birthdate" th:text="#{dashboard.student.addstudent.form.birthdate}">birthdate</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <div class="input-group date" id="birthdate">
+                                                    <input type="text" class="form-control" required th:field="*{birthdate}" th:attr="disabled=${disabled}" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>                                                     
+                                            </div>                                            
+                                            <div class="col-md-4 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.gender}">Seleccione el sexo</label>
+                                                <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                <select class="form-control"  id="gender" name="gender" required th:field="*{gender}" th:attr="disabled=${disabled}" >
+                                                    <option value="0"> -- </option>
+                                                    <option th:each="gender : ${genders}"   th:value="${gender.id}" th:utext="${gender.description}" th:field="*{gender}" />
+                                                </select>
+                                            </div>	
+                                            <div class="col-md-4 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.bloodType}">Tipo de sangre</label>                                                                                                    
+                                                <select class="form-control" th:field="*{bloodGroup}" id="bloodGroup" name="bloodGroups" th:attr="disabled=${disabled}" >
+                                                    <option value="0"> -- </option>
+                                                    <option th:each="bloodGroup : ${bloodGroups}"   th:value="${bloodGroup.id}" th:utext="${bloodGroup.description}" th:field="*{bloodGroup}"/>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 mb-1">
+                                                <label for="allergy" th:text="#{dashboard.student.addstudent.form.allergy}">allergy</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="allergy" placeholder="" value="" required th:field="*{allergy}" maxlength="40" th:attr="disabled=${disabled}" />  
+                                            </div>
+                                            <div class="col-md-4 mb-1">
+                                                <label for="weight" th:text="#{dashboard.student.addstudent.form.weight}">weight</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="number" class="form-control" id="weight" placeholder="" value="" required  step=".01" th:field="*{weight}" th:attr="disabled=${disabled}" />
+                                            </div>
+                                            <div class="col-md-4 mb-1">
+                                                <label for="height" th:text="#{dashboard.student.addstudent.form.height}">height</label>                                                    
+                                                <input type="number" class="form-control" id="height" placeholder="" value="" required  step=".01" th:field="*{height}" th:attr="disabled=${disabled}" />
+                                            </div>  
+                                            <div class="col-md-4 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.size}">Talla</label>                                                    
+                                                <select class="form-control" id="size" name="size" th:field="*{size}" th:attr="disabled=${disabled}" >
+                                                    <option value="0"> -- </option>
+                                                    <option th:each="size : ${sizes}"   th:value="${size.id}" th:utext="${size.description}" th:field="*{size}" />
+                                                </select>
+                                            </div>	
+                                            <div class="col-md-4 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.category}">Categoria del usurio</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <select class="form-control"  id="category" name="category" th:field="*{category}" required th:attr="disabled=${disabled}" >
+                                                    <option value="0"> -- </option>
+                                                    <option th:each="category : ${categories}"   th:value="${category.id}" th:utext="${category.description}" th:field="*{category}"/>
+                                                </select>
+                                            </div>	
+                                            <div class="col-md-4 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.occupation}">Ocupacion</label>                                                    
+                                                <select class="form-control" id="employment" name="employment" th:field="*{employment}" th:attr="disabled=${disabled}" >
+                                                    <option value="0"> -- </option>
+                                                    <option th:each="employment : ${employments}"   th:value="${employment.id}" th:utext="${employment.description}" th:field="*{employment}"/>
+                                                </select>
+                                            </div>	     
+                                            <div class="col-md-4 mb-1">
+                                                <label for="identificationCard" th:text="#{dashboard.student.addstudent.form.identificationCard}">Cedula</label>            
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="identificationCard" placeholder="" value="" th:field="*{identificationCard}" required maxlength="15" th:attr="disabled=${disabled}" />
+                                            </div>     
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="email" th:text="#{dashboard.student.addstudent.form.email1}">Email <span class="text-muted">(Optional)</span></label>                                             
+                                                <input type="email" class="form-control" id="email" placeholder="you@example.com" th:field="*{email}"  th:attr="disabled=${disabled}" />
+                                            </div>                             
+                                            <div class="col-md-4 mb-1">
+                                                <label for="email" th:text="#{dashboard.student.addstudent.form.email2}">Email2 <span class="text-muted">(Optional)</span></label>
+                                                <input type="email" class="form-control" id="email2" placeholder="you@example.com" th:field="*{email2}" th:attr="disabled=${disabled}" />                                                  
+                                            </div>
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="phone1" th:text="#{dashboard.student.addstudent.form.phone1}"></label>                                                
+                                                <input type="text" class="form-control" id="phone1" placeholder="2730000" th:field="*{phone1}"  maxlength="15" th:attr="disabled=${disabled}" />                                                    
+                                            </div>         
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="phone2" th:text="#{dashboard.student.addstudent.form.phone2}">phone2 <span class="text-muted">(Optional)</span></label>
+                                                <input type="text" class="form-control" id="phone2" placeholder="2730000" th:field="*{phone2}" maxlength="18" th:attr="disabled=${disabled}" />                                                   
+                                            </div>
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="cellPhone1" th:text="#{dashboard.student.addstudent.form.cellPhone1}">cellPhone1<span class="text-muted">(Optional)</span></label>
+                                                <input type="text" class="form-control" id="cellPhone1" placeholder="6700000" th:field="*{cellPhone1}" maxlength="18" th:attr="disabled=${disabled}" />
+                                            </div>
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="text" th:text="#{dashboard.student.addstudent.form.cellPhone2}">cellPhone2 <span class="text-muted">(Optional)</span></label>
+                                                <input type="text" class="form-control" id="cellPhone2" placeholder="6700000" th:field="*{cellPhone2}" maxlength="18" th:attr="disabled=${disabled}" />              
+                                            </div>   
+                                             <div class="col-md-4 mb-1" th:if="${editModeStudent == false}">                                              
+                                                <label for="dayOfIncomeLebel" th:text="#{dashboard.student.addstudent.registrationDate}">registrationDate</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <div class="input-group date" id="dayOfIncome">
+                                                    <input type="text" class="form-control" required th:field="*{dayOfIncome}" th:attr="disabled=${disabled}" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>                                                     
+                                            </div>                                            
+                                            <div class="col-md-12 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.allergy.address}">address</label>          
+                                                <textarea class="form-control" rows="2" id="address" th:field="*{address}" maxlength="220" th:attr="disabled=${disabled}" ></textarea>
+                                            </div>
+
+                                            <div class="col-md-12 mb-1">
+                                                <label th:text="#{dashboard.student.addstudent.form.photo}">Agregue una foto</label>
+                                                <input type="file" id="photo" th:field="*{photo}" th:attr="disabled=${disabled}" th:data-max-size="${keyMaxFileSize}" placeholder="img.jpg" accept="image/jpeg" />
+                                            </div>                                             
+
+                                            <div class="panel-heading col-md-4 mb-1">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" class="text-info" data-parent="#accordion" href="#collapseOne" ><strong th:text="#{dashboard.student.addstudent.form.informationOfTheGuardian}">Información del acudiente.</strong></a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="col-md-12 mb-1 panel panel-primary collapse in">
+                                                <div class="panel-body">
+                                                    <div class="col-md-6 mb-1">
+                                                        <label for="nameOfTheGuard" th:text="#{dashboard.student.addstudent.form.nameOfTheGuard}">First name</label>                                                          
+                                                        <input type="text" class="form-control" id="nameOfTheGuard" placeholder="" value="" th:field="*{nameOfTheGuard}" maxlength="40" th:attr="disabled=${disabled}" />  
+                                                    </div>
+                                                    <div class="col-md-6 mb-1">
+                                                        <label for="lastNameOfTheGuardian" th:text="#{dashboard.student.addstudent.form.lastNameOfTheGuardian}">Last name</label>
+                                                        <input type="text" class="form-control" id="lastNameOfTheGuardian" placeholder="" value="" th:field="*{lastNameOfTheGuardian}" maxlength="40" th:attr="disabled=${disabled}" />       
+                                                    </div>
+                                                    <div class="col-md-4 mb-1">
+                                                        <label for="email" th:text="#{dashboard.student.addstudent.form.email2}">Email2 <span class="text-muted">(Optional)</span></label>
+                                                        <input type="email" class="form-control" id="emailOfTheGuardian" placeholder="you@example.com" th:field="*{emailOfTheGuardian}" />                                                  
+                                                    </div>
+                                                    <div class="col-md-4 mb-1" >
+                                                        <label for="phone1" th:text="#{dashboard.student.addstudent.form.telephonOfTheGuardian}">phone<span class="text-muted">(Optional)</span></label>
+                                                        <input type="text" class="form-control" id="telephonOfTheGuardian" placeholder="64523223" th:field="*{telephonOfTheGuardian}" maxlength="18" th:attr="disabled=${disabled}" />                                                    
+                                                    </div>         
+                                                    <div class="col-md-4 mb-1" >
+                                                        <label for="phone2" th:text="#{dashboard.student.addstudent.form.telephonOfTheGuardian2}">phone2 <span class="text-muted">(Optional)</span></label>
+                                                        <input type="text" class="form-control" id="telephonOfTheGuardian2" placeholder="6435661" th:field="*{telephonOfTheGuardian2}" maxlength="18" th:attr="disabled=${disabled}" />                                                   
+                                                    </div>
+                                                    <div class="col-md-4 mb-1" >
+                                                        <label for="parentsCertificate" th:text="#{dashboard.student.addstudent.form.parentsCertificate}">Cedula <span class="text-muted">(Optional)</span></label>
+                                                        <input type="text" class="form-control" id="parentsCertificate" placeholder="6435661" th:field="*{parentsCertificate}" maxlength="15" th:attr="disabled=${disabled}" />                                                   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <th:block th:if="${OkAddStudent == 'ok'}">     
+                                                <script th:inline="javascript"  type="text/javascript">
+                                                    $(window).on('load', function () {
+                                                        $('#modalMessage').modal('show');
+                                                    });
+                                                </script>
+                                                <div th:replace="fragments/components :: modal(id='modalMessage', title='Alta de estudiante')"></div>                                                
+                                            </th:block>
+                                             <input type="hidden"   th:if="${editModeStudent == true}" th:field="*{dayOfIncome}" />
+                                            <th:block th:if="${OkEditStudent == 'ok'}">                                                    
+                                                <script th:inline="javascript"  type="text/javascript">
+                                                    $(window).on('load', function () {
+                                                        $('#modalMessage').modal('show');
+                                                    });                                                   
+                                                </script>
+                                                <div th:replace="fragments/components :: modal(id='modalMessage', title='Edición de estudiante')"></div>                                                
+                                            </th:block>
+                                            <div class="col-md-12 mb-1" id="myButtons">
+                                                <button type="submit" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.save}">Subir los cambios</button>
+                                                <button type="reset" id="cleanForm" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.clear}">Limpiar los datos</button>
+                                            </div>    
+                                              <th:block th:if="${editModeStudent == false}">   
+                                                <script th:inline="javascript" type="text/javascript">  
+                                                 $('#dayOfIncome').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${birthdate}]]*/));
+                                                </script>
+                                            </th:block>   
+                                            <script th:inline="javascript" type="text/javascript">
+                                                $(function () {
+                                                   $('#birthdate').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${birthdate}]]*/));                                                   
+                                                    $('#photo').bind('change', function () {
+                                                        var isOk = true;
+                                                        console.log('isOk:' + isOk);
+                                                        $('input[type=file][data-max-size]').each(function () {
+                                                            if (typeof this.files[0] !== 'undefined') {
+                                                                var maxSize = parseInt($(this).attr('data-max-size'), 10);
+                                                                console.log('data-max-size:'+$(this).attr('data-max-size'))
+                                                                 size = this.files[0].size;
+                                                                console.log('size:' + size);
+                                                                console.log('maxSize:' + maxSize);
+                                                                var sizeReal = size +3266;
+                                                                console.log('sizeReal:' + sizeReal);
+                                                                isOk = maxSize > sizeReal;
+                                                                if (!isOk) {
+                                                                    console.log('!isOk:' + !isOk);
+                                                                    $("#photo").val("");
+                                                                      bootbox.alert({
+                                                                        message:/*[[${messageAlertSizePhoto}]]*/,
+                                                                        className: 'alert alert-dismissable'
+                                                                    });
+                                                                }
+                                                                console.log('isOk:' + isOk);
+                                                                return isOk;
+                                                            }
+                                                        });
+                                                        return isOk;
+                                                    });
+                                                });                                           
+                                            </script>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- page-wrappe -->
+                </div>
+                <!--wrapper-->
+
+                </body>
+
+                </html>

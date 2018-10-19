@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="#{dashboard.title}"></title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+        <!-- MetisMenu CSS -->
+        <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+        <!-- Custom CSS -->
+        <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+        <!-- Morris Charts CSS -->
+        <link href=""   th:href="@{/resources/vendor/morrisjs/morris.css}" rel="stylesheet"/>
+
+        <!-- Custom Fonts -->
+        <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+        <!-- jQuery -->
+        <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+        <!-- Morris Charts JavaScript -->
+        <script src="" th:src="@{/resources/vendor/raphael/raphael.min.js}"></script>
+        <script src="" th:src="@{/resources/vendor/morrisjs/morris.min.js}"></script>
+        <script src="" th:src="@{/resources/data/morris-data.js}"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!-- Reusable alert -->
+        <div th:fragment="alert (type, message)" class="alert alert-dismissable" th:classappend="'alert-' + ${type}">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span th:text="${message}">Test</span>   
+            <ul class="list-group">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}" class="list-group-item list-group-item-danger"/>
+            </ul>          
+            <ul class="list-group">
+                <li th:each="err_: ${listError}" th:text="${err_}" class="list-group-item list-group-item-danger" />
+            </ul>
+        </div>
+        <!-- Reusable modal -->
+        <!--My modal -->
+        <div th:fragment="modal (id, title)" class="modal fade" th:id="${id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel" th:text="${title}">Modal title</h4>
+                    </div>
+                    <div class="modal-body" th:if="${generalModalMessage!=null}" th:id="${id + '-body'}">
+                        <p class="alert alert-success" th:text="${generalModalMessage}">General Mensaje modal</p>                      
+                    </div>
+                     <div class="panel panel-primary" th:if="${aboutEnable==true}">
+                        <div class="panel-body">
+                            <p th:text="#{bzk.version}+${appVersion}" class="text-info"></p>
+                            <p th:text="#{bzk.developers}+${developer}" class="text-info"></p>
+                            <p th:text="#{bzk.licence}+${licence}" class="text-info"></p>
+                            <p sec:authentication="name"class="text-info"></p>
+                            <p sec:authentication="principal.authorities" class="text-info"></p>
+                        </div>                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal" th:text="#{modal.close}">Close</button>
+                        <th:block th:if="${acction == 'save'}">   
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" th:text="#{modal.close}">Close</button>    
+                            <button type="button" class="btn btn-primary" th:text="#{modal.confirm}">Save changes</button>
+                        </th:block>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0" th:fragment="navMainMenu" th:switch="${module}">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+      
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul th:replace="fragments/components :: frontMainMenu" ></ul> 
+            <!-- /.navbar-top-links -->
+
+            <div th:replace="fragments/components :: leftPanel"></div>
+        </nav>
+        <ul class="nav navbar-top-links navbar-right" sec:authorize="isAuthenticated()" th:fragment="frontMainMenu">        
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+
+                <!-- /.dropdown-alerts -->
+            </li>
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">            
+                    <li><a th:href="@{/about}" th:text="#{header.menu.about}" sec:authorize="isAuthenticated()"><i class="fa  fa-info fa-fw"></i></a>
+                    </li>
+                    <li class="divider"></li>                    
+                    <li><a th:href="@{/editPersonalInfo}" th:text="#{header.menu.setting}" sec:authorize="isAuthenticated()"><i class="fa fa-gear fa-fw"></i></a>
+                    </li>                     
+                    <li class="divider"></li>
+                    <li><a th:href="@{/signin}" th:text="#{header.menu.logout}" sec:authorize="isAuthenticated()"><i class="fa fa-sign-out fa-fw"></i></a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <div class="navbar-default sidebar" role="navigation" sec:authorize="isAuthenticated()" th:fragment="leftPanel">
+            <div class="row"></div>
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">   
+                    <li>                        
+                        <a href="#" th:href="@{/dashboard}"><i class="fa fa-table"></i><span th:text="#{dashboard.dashboard}"></span></a>
+                    </li>
+                    <li>
+                        <a href="#"  ><i class="fa fa-bar-chart-o fa-fw"></i><span class="fa arrow" ></span><span th:text="#{dashboard.report}"></span> </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#" th:href="@{/report?reportOp=0}" th:text="#{dashboard.report.studentReport}" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_USER')"></a>
+                            </li>
+                            <li>
+                                <a href="#" th:href="@{/report?reportOp=1}" th:text="#{dashboard.report.administrativeReport}"  sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_USER')"></a>
+                            </li>
+                            <li>
+                                <a href="#" th:href="@{/report?reportOp=2}"  th:text="#{dashboard.report.paymentHistoryBystudent}" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_USER')">></a>
+                            </li>
+                            <li>
+                                <a href="#" th:href="@{/report?reportOp=3}"  th:text="#{dashboard.report.receiptsReport}" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_USER')">></a>
+                            </li>
+                             <li>
+                                <a href="#" th:href="@{/report?reportOp=4}"  th:text="#{dashboard.report.reportForDownload}" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_USER')"></a>
+                            </li>
+                        </ul>
+                    </li>                    
+                    <li sec:authorize="isAuthenticated()">
+                        <a href="#" th:href="@{/multiPayment}" ><i class="fa fa-money"></i><span th:text="#{dashboard.payments}"></span></a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()">
+                        <a href="#" ><i class="glyphicon glyphicon-user" ></i><span class="fa arrow" >
+                        </span><span th:text="#{dashboard.student.studentMaintenance}"></span></a>                            
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#" th:text="#{dashboard.student.addstudent}" th:href="@{/addstudent}"></a>
+                            </li>						
+                            <li>
+                                <a href="#" th:text="#{dashboard.student.editstudent}" th:href="@{/studentSearch(option=1)}"></a>
+                            </li>             
+                        </ul>                 
+                    </li>                                            						
+                    <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+                        <a href="#" th:href="@{/productsMaintenance}"><i class="fa fa-briefcase"></i><span th:text="#{dashboard.products}"></span></a>                                 
+                    </li>
+                    <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+                        <a href="#" th:href="@{/calendarActivities}"><i class="fa fa-users"></i><span th:text="#{dashboard.userActivities}"></span></a>
+                    </li>
+                    <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+                        <a href="#"  ><i class="glyphicon glyphicon-wrench"></i><span class="fa arrow" ></span><span th:text="#{dashboard.maintenance.module}"></span> </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="#" th:href="@{/accountMaintenance}" th:text="#{dashboard.maintenance.user.add}" ></a>
+                            </li>
+                            <li sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN')">
+                                <a href="#" th:text="#{dashboard.maintenance.parameters}" ></a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li> 
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="tableStudent">
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.student.addstudent.form.firstName}">Nombre</th>
+                    <th th:text="#{dashboard.student.addstudent.form.Surname}">Apellido paterno</th>
+                    <th th:text="#{dashboard.student.addstudent.form.secondSurname}">Apellido materno</th>
+                    <th th:text="#{dashboard.student.addstudent.form.identificationCard}">Cedula</th>
+                    <th th:text="#{dashboard.student.addstudent.form.category}">Categoria</th>
+                    <th th:text="#{dashboard.student.studentSearch.registrationNumber}">Inscripcion</th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(studentsDto)}">
+                <tr class="odd gradeX" th:each="dto: ${studentsDto}" >                                                    
+                    <td th:text="${dto.name}" class="center">nombre</td>
+                    <td th:text="${dto.surname}" class="center">apellido</td>
+                    <td th:text="${dto.surname2}"class="center">apellido2</td>
+                    <td th:text="${dto.docid}"class="center">cedula</td>
+                    <td th:text="${dto.category}"class="center">categoria</td>                                                                                                 
+                    <td>
+                        <a href="#" th:text="${dto.id}" th:href="@{${searchStudentAction}(idStudent=${dto.id})}" class="btn btn-link"></a>                                                      
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="administrativeReport" >
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.report.administrativeReport.date}" ></th>
+                    <th th:text="#{dashboard.report.administrativeReport.name}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.number}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.product}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.paymentMethod}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.amount}"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >  
+                 <th:block th:if="${dto.totalPerDay =='' }" >                    
+                    <td th:text="${dto.date}" ></td>  
+                    <td th:text="${dto.name}" class="center"></td>
+                    <td th:text="${dto.number}" class="center"></td>
+                    <td th:text="${dto.product}"class="center"></td>
+                    <td th:text="${dto.paymentMethod}"class="center"></td>
+                    <td th:text="${dto.amount}"class="right"></td>
+                 </th:block>                    
+                 <th:block th:if="${dto.totalPerDay !=''}" >
+                    <td th:text="${dto.date}" ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td ></td>
+                    <td th:text="${dto.dateSubTotal}" class="center"></td>
+                    <td th:text="${dto.totalPerDay}"class="right"></td>
+                 </th:block>                  
+                </tr>
+            </tbody>
+            <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr>
+                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th th:text="${reportFood.total}" align="right"></th>
+                </tr>
+            </tfoot> 
+        </table>
+          <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="paymentHistoryBystudent">
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.date}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.name}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.number}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.product}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.paymentMethod}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.amount}"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >                                                    
+                    <td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>
+                    <td th:text="${dto.name}" class="center"></td>
+                    <td th:text="${dto.number}" class="center"></td>
+                    <td th:text="${dto.product}"class="center"></td>
+                    <td th:text="${dto.paymentMethod}"class="center"></td>
+                    <td th:text="${dto.amount}"align="right"></td>                                                                                                                   
+                </tr>
+            </tbody>
+               <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr>
+                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th th:text="${reportFood.total}" align="right"></th>
+                </tr>
+            </tfoot> 
+        </table>
+         <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="receiptsReport">
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.date}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.number}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.paymentMethod}"></th>
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.amount}"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >                                                    
+                  	<td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>
+                    <td th:text="${dto.number}" class="center"></td>
+                    <td th:text="${dto.paymentMethod}"class="center"></td>
+                    <td th:text="${dto.amount}" align="right"></td>                                                                                                                   
+                </tr>
+            </tbody>           
+            <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr>
+                    <th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th th:text="${reportFood.total}" align="right"></th>
+                </tr>
+            </tfoot>           
+        </table>
+        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="reportForDownload">
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.report.reportForDownload.date}"></th>
+                    <th th:text="#{dashboard.report.reportForDownload.name}"></th>
+                    <th th:text="#{dashboard.report.reportForDownload.number}"></th>
+                    <th th:text="#{dashboard.report.reportForDownload.product}"></th>
+                    <th th:text="#{dashboard.report.reportForDownload.paymentMethod}"></th>
+                    <th th:text="#{dashboard.report.reportForDownload.amount}"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >                                                    
+                    <td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>
+                    <td th:text="${dto.name}" class="center"></td>
+                    <td th:text="${dto.number}" class="center"></td>
+                    <td th:text="${dto.product}"class="center"></td>
+                    <td th:text="${dto.paymentMethod}"class="center"></td>
+                    <td th:text="${dto.amount}"align="right"></td>                                                                                                                   
+                </tr>
+            </tbody>
+            <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr>
+                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th th:text="${reportFood.total}" align="right"></th>
+                </tr>
+            </tfoot> 
+        </table>
+        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-report" role="navigation" sec:authorize="isAuthenticated()" th:fragment="stateStudentAccount">
+            <thead>
+                <tr>                                                     
+                    <th th:text="#{dashboard.report.paymentHistoryBystudent.name}" id="name"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.lastMonthlyPayment}" id="lastMonthlyPayment"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.previousAnnuityDate}" id="previousAnnuityDate"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.active}" id="active"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.enrollmentInTheCurrentMonth}" id="enrollmentInTheCurrentMonth"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.enrollment}" id="enrollment"></th>
+                    <th th:text="#{dashboard.report.stateStudentAccount.contractMonth}" id="contractMonth"></th>
+                </tr>
+            </thead>
+            <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >                                                                       
+                    <td th:text="${dto.name}" class="center"></td>                            
+                    <td><span th:text="${dto.intLastMonthlyPayment}" class='hide'></span><span th:text="${dto.lastMonthlyPayment}" ></span></td>
+                    <td><span th:text="${dto.intPreviousAnnuityDate}" class='hide'></span><span th:text="${dto.previousAnnuityDate}"></span></td>  
+                    <td th:text="${dto.active}"class="center"></td>
+                    <td th:text="${dto.enrollmentInTheCurrentMonth}"class="center"></td>
+                    <td th:text="${dto.enrollment}"class="right"></td>    
+                    <td th:text="${dto.contractMonth}"class="right"></td>    
+                </tr>
+            </tbody>
+              <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
+                <tr>
+                    <th></th><th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.stateStudentAccount.totalOfActiveStudents}"></th>
+                    <th th:text="${reportFood.active}" align="right"></th>
+                </tr>
+            </tfoot> 
+        </table>
+    </body>
+</html>

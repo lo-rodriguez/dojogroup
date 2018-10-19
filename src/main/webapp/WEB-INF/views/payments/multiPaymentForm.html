@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="ctx" th:content="@{/}" />
+    <th:block th:if="${editModeStudent == false}">    
+        <title th:text="#{dashboard.student.addstudent.title}"></title>
+    </th:block>    
+    <!-- Bootstrap Core CSS -->
+    <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <!-- MetisMenu CSS -->
+    <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/animate.min.css}">
+    
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/datatables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/dataTables.bootstrap.css}">
+    <!-- Custom Fonts -->
+    <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+    <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+
+    <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+
+    <!-- jQuery -->
+    <!--   <script src="../../../bzk/resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>-->
+    <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+    <!--Moment-->
+    <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>
+    <!--bootstrap-datetimepicker-->
+    <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+
+    <script type="text/javascript" src="" th:src="@{/resources/moment/locate/es.js}"  charset="UTF-8"></script>
+
+    <script type="text/javascript" src="" th:src="@{/resources/js/jsrender.min.js}"></script>
+    <script type="text/javascript" src="" th:src="@{/resources/js/jsviews.min.js}"></script>
+    <script type="text/javascript" src="" th:src="@{/resources/js/bootbox.min.js}"  ></script>  
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav th:replace="fragments/components :: navMainMenu">
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="page-header" th:text="#{dashboard.payment.form.pay.register}">Formulario de registros de pagos de estudiante</h3>                    
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="text-info" ><small th:text="#{dashboard.payment.form.legend}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.payment.form.legend2}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.payment.form.legend3}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.payment.form.legend4}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.payment.form.legend5}"></small></p>
+                        </div>
+                        <div class="panel-body" id="panelMain">
+                            <form class="needs-validation" action="#" method="post"  th:action="@{${formAction}}" name="formPayment" th:object="${paymentForm}" id="formPayment" >
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" th:text="#{dashboard.payment.form.chooseThePayment}">                                                            
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="col-md-4">
+                                                    <label th:text="#{dashboard.payment.form.typesOfpayments}">Seleccione el tipo de pago</label>
+                                                    <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                    <select class="form-control"  id="typePayment" name="typePayment" required th:field="*{typePayment}"  th:attr="disabled=${disabled}" >
+                                                        <option value="0"> -- </option>
+                                                        <option th:each="typePayment : ${typesPayments}"   th:value="${typePayment.id}" th:utext="${typePayment.description}" th:field="*{typePayment}"/>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 mb-1">                                              
+                                                    <label for="datePayment" th:text="#{dashboard.payment.form.dateRegister}">Fecha de pago</label>
+                                                    <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                    <div class="input-group date" id="datePay" >
+                                                        <input type="text" class="form-control" required th:field="*{datePay}" th:attr="disabled=${disabled}" th:value="*{datePay}"  id="datePayment" name="datePayment"/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>                                                     
+                                                </div>
+                                            </div>                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" th:text="#{dashboard.payment.form.detailOfThePayments}">                                                            
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="col-md-8 order-md-1">                                                                                    
+                                                    <div class="row">                                         
+                                                        <div class="col-md-4 mb-1">
+                                                            <label th:text="#{dashboard.payment.form.product}">Seleccione el producto</label>
+                                                            <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                            <select class="form-control"  id="product"  required th:field="*{idProduct}"  th:attr="disabled=${disabled}"   onchange="loadPriceUnit();" name="idProduct">
+                                                                <option value="0"> -- </option>
+                                                                <option th:each="entry : ${products.entrySet()}"   th:value="${entry.key}" th:utext="${entry.value}" th:field="*{idProduct}" />
+                                                            </select>
+                                                        </div>                                                       
+                                                        <div class="col-md-4 mb-1">
+                                                            <label for="height" th:text="#{dashboard.payment.form.totalTax}">Impuesto</label>                                                    
+                                                            <input type="number" class="form-control" id="tax" placeholder="" value="" required   maxlength="7" step="0.01" th:field="*{totalTax}" disabled name="totalTax"/>
+                                                        </div>
+                                                        <div class="col-md-4 mb-1">
+                                                            <label for="weight" th:text="#{dashboard.payment.form.totalPayment}">Total</label>
+                                                            <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                            <input type="number" class="form-control" id="total" placeholder="" value="" required   maxlength="7" step="0.01"  th:field="*{totalPayment}" th:attr="disabled=${disabled}" name="total"/>
+                                                        </div>
+                                                        <div class="col-md-12 mb-1">
+                                                            <label for="Comentarios" th:text="#{dashboard.payment.form.productComment}">Comentarios</label>                                                
+                                                            <input type="text" class="form-control" id="productComment" placeholder="" value=""  size="80" th:field="*{numberOfTransfer}" maxlength="80" th:attr="disabled=${disabled}" name="comment"/>                                                 
+                                                        </div>
+                                                        <div class="col-md-8 mb-1">
+                                                            <label th:text="#{dashboard.student}">Seleccione el estudiante</label>
+                                                            <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                            <select class="form-control selectpicker"  id="idStudent" required th:field="*{idStudent}"  th:attr="disabled=${disabled}"  data-live-search="true" name="idStudent">                                                                                                                             
+                                                                <option th:each="idStudent : ${descriptionStudents}"   th:value="${idStudent.id}" th:utext="${idStudent.description}" th:field="*{idStudent}"/>
+                                                            </select>                                             
+                                                        </div>
+                                                        <div class="col-lg-12">
+
+                                                        </div>
+
+                                                        <div class="col-md-12 mb-1">                                                                                                                                                                                                                                              
+                                                            <button type="button" class="btn-success btn-xs add" id="add" th:text="#{dashboard.payment.form.addProduct}" onclick="addProduct();">Primary</button>
+                                                            <button type="button" class="btn-warning btn-xs" id="remove" th:text="#{dashboard.payment.form.deleteProduct}" onclick="removeProduct();">Primary</button>
+                                                        </div>
+
+                                                    </div>                                         
+                                                </div>
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- -->
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" th:text="#{dashboard.student.paymentDetail}">
+
+                                            </div>
+                                            <!-- /.panel-heading -->
+                                            <div class="panel-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered table-hover display" id="receipt">
+                                                        <thead  class="thead-light">
+                                                            <tr>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.numberStudent}">#</th>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.nameStudent}">Name Student</th>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.productSelec}">Product</th>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.productTax}">Tax</th>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.productTotal}">Total</th>
+                                                                <th class="bg-primary" th:text="#{dashboard.payment.form.productComment}">Comment</th>                                                        
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot id="detailsFoot">                                                          
+                                                        </tfoot>
+                                                        <tbody id="detailsPayments">                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!-- /.table-responsive -->                                         
+                                            </div>
+                                            <!-- /.panel-body -->
+                                        </div>
+                                        <!-- /.panel -->
+                                    </div>
+
+                                    <!-- /.table-responsive -->
+                                </div>		
+                                <!-- -->
+                                <script id="detailsPaymentTemplate" type="text/x-jsrender">
+                                    {{for data}}
+                                    <tr>
+                                    <td align="right">{{:number}}</td>                                          
+                                    <td>{{:student}}</td>
+                                    <td>{{:produc}}</td>
+                                    <td align="right">${{:tax}}</td>
+                                    <td align="right">${{:total}}</td>
+                                    <td>{{:comment}}</td>
+                                    </tr>
+                                    {{/for}}
+                                </script>    
+                                <script id="footPaymentTemplate" type="text/x-jsrender">  
+								{{if f.total>0}}	
+                                  <tr>
+                                  <td class="bg-primary" th:text="#{dashboard.report.reportForDownload.number}"></td>
+                                   <td class="bg-primary" th:text="#{dashboard.payment.form.subTotal}"></td>
+                                   <td class="bg-primary" th:text="#{dashboard.payment.form.tax}"></td>
+                                   <td class="bg-primary" th:text="#{dashboard.payment.form.total}"></td>
+                                  </tr>
+                                    {{for f}}
+                                    <tr>
+                                    <td align="right"><b>{{:number}}</b></td>
+                                    <td align="right"><b>${{:subtotal}}</b></td>                                         
+                                    <td align="right"><b>${{:tax}}</b></td>
+                                    <td align="right"><b>${{:total}}</b></td>                                    
+                                    </tr>
+                                    {{/for}}
+								{{/if}}
+                                </script>  
+                                <div class="row">
+                                    <div class="col-md-12 mb-1">
+                                        <button type="button" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.save}" onclick="sendPayment();">Subir los cambios</button>
+                                        <button type="reset" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.clear}">Limpiar los datos</button>
+                                        <a href="#" id="download" class="btn btn-outline btn-primary" th:text="#{dashboard.payment.download}" onclick="downloadPDF()">download</a>                                  
+                                    </div>                                    
+                                </div>                             
+                            </form>        
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <!-- /.col-lg-6 -->
+                </div> 
+                <!-- /.row (nested) -->
+            </div>
+            <!-- /.row -->
+        </div>	
+        <!-- page-wrappe -->
+    </div>
+
+<!--wrapper-->
+<script th:inline="javascript" type="text/javascript">
+    var details = [];
+    var descDetails = [];
+    var cont = 1;
+    var totalPaymentTmp=0;
+    var subTotalTmp=0;
+    var taxTmp=0;
+    var tfoo =[];
+    /**
+    Add new product by payment
+    */
+    function addProduct() {
+        "use strict";
+        var nameStudent = $('#idStudent').find(":selected").text();
+        var descriptionProduc = $('#product').find(":selected").text();
+        var total = parseFloat($('#total').val());
+        var tax = parseFloat($('#tax').val())*total;
+        var vtax =tax.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');        
+        var vtotal =total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        var comment = $('#productComment').val();
+        var idProduct = $('#product').val();
+        var idStudent = $('#idStudent').val();
+        /* fill the fix the description and the one that we will send to the server*/
+        var descriptionDetail = {number: idStudent, student: nameStudent, produc: descriptionProduc, tax: vtax, total: vtotal, comment: comment};
+        var detail = {idStudent: idStudent, idProduct: idProduct, tax: tax, total: total, comment: comment};
+        descDetails.push(descriptionDetail);
+        details.push(detail);
+        var len = descDetails.length;
+        $.templates(
+                {detailsTmpl: "#detailsPaymentTemplate"}
+        );
+        var html = $.templates.detailsTmpl.render({data: descDetails});
+        console.log("len: " + len);
+        console.log("html: " + html);
+        $("#detailsPayments").html(html);
+        /*Here the new*/
+        totalPaymentTmp=(total+tax)+totalPaymentTmp;        
+        subTotalTmp = total+subTotalTmp;        
+        taxTmp=tax+taxTmp;
+        var subTotalTmpHelp = subTotalTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+        var totalPaymentTmpHelp=totalPaymentTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');         
+        var taxTmpHelp=taxTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+        tfoo = {number:' ',total: totalPaymentTmpHelp, subtotal:subTotalTmpHelp, tax: taxTmpHelp};
+        $.templates(
+                {footTmpl: "#footPaymentTemplate"});
+        var html = $.templates.footTmpl.render({f: tfoo});
+        console.log("html:" + html);
+        $("#detailsFoot").html(html);
+    }
+    /**
+     Remove last product 
+    */
+    function removeProduct() {
+        if (cont > 1) {
+            cont--;
+        }
+        var temp = details.pop();
+        descDetails.pop();
+        $.templates(
+                {detailsTmpl: "#detailsPaymentTemplate"}
+        );
+        var html = $.templates.detailsTmpl.render({data: descDetails});
+        $("#detailsPayments").html(html);
+        /*Here the new*/
+        totalPaymentTmp=totalPaymentTmp - (temp.total+temp.tax);
+        subTotalTmp = subTotalTmp-temp.total;
+        taxTmp=taxTmp - temp.tax;
+
+        var subTotalTmpHelp = subTotalTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+        var totalPaymentTmpHelp=totalPaymentTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');         
+        var taxTmpHelp=taxTmp.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); 
+        
+        	tfoo = {number:' ',total: totalPaymentTmpHelp, subtotal:subTotalTmpHelp, tax: taxTmpHelp};
+            $.templates(
+                    {footTmpl: "#footPaymentTemplate"});
+            var html = $.templates.footTmpl.render({f: tfoo});
+            console.log("html:" + html);
+            $("#detailsFoot").html(html);     
+    }
+    /**
+    send the payment to the server to be saved
+    */
+    function sendPayment() {
+        var host = window.location.host;
+        var protocol = window.location.protocol;
+        console.log("host:" + host);
+        console.log("protocol:" + protocol);
+        var ctx
+                = /*[[@{/processPayments}]]*/;
+                var datePay = $('#datePayment').val();
+        var typePayment = $('#typePayment').val();
+        console.log("datePay:" + datePay);
+        var data = {details: details, datePay: datePay, typePayment: typePayment};     
+        var url = protocol + '//' + host + ctx + '?data=' + encodeURI(JSON.stringify(data));
+        console.log("url:" + url);
+        $.getJSON(url, {
+            tags: "",
+            tagmode: "any",
+            format: "json"
+        }).fail(function () {
+            console.log("error");
+        })
+        .done(function (data) {                 
+            if (data.ok == 'ok' || data.ok == 'noOKPDF') {
+                console.log("message:" + data.message);
+                bootbox.alert({
+                    message: data.message,
+                    className: 'alert alert-dismissable'
+                });
+                var totalPayment_=parseFloat(data.totalPayment).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                var subTotal_ =  parseFloat(data.subTotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                var tax_=parseFloat(data.totalTax).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                 tfoo = {number:data.numPayment,total: totalPayment_, subtotal:subTotal_, tax: tax_};
+                $.templates(
+                        {footTmpl: "#footPaymentTemplate"});
+                var html = $.templates.footTmpl.render({f: tfoo});
+                console.log("html:" + html);
+                $("#detailsFoot").html(html);
+                var nodes = document.getElementById("panelMain").getElementsByTagName('*');
+                for (var i = 0; i < nodes.length; i++) {
+                    nodes[i].disabled = true;
+                }
+                if (data.ok == 'ok'){
+                    document.getElementById("download").disabled=false;    
+                    document.getElementById('download').style.visibility = 'visible';
+                    var ctx = /*[[@{/downloadReceipt}]]*/;
+                    var idReceipt = data.numPayment;
+                    var urlDownload = protocol + '//' + host + ctx + '/' + idReceipt;
+                    console.log("urlDownload:" + urlDownload);
+                  //  $("a.download").attr("href", urlDownload);
+                  document.querySelector('#download').setAttribute('href', urlDownload);
+                }  
+                else{
+                    console.log("message:" + data.message);
+                    bootbox.alert({
+                        message: data.message,
+                        className: 'alert alert-dismissable'
+                    });
+                }
+                }
+                else {
+                    console.log("message:" + data.message);
+                    bootbox.alert({
+                        message: data.message,
+                        className: 'alert alert-dismissable'
+                    });
+                }
+            }
+            );
+    }
+    $(function () {
+        $('#datePay').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${payDate}]]*/));
+         document.getElementById('download').style.visibility = 'hidden';
+    });
+    function loadPriceUnit() {
+        var host = window.location.host;
+        var protocol = window.location.protocol;
+        console.log("host:" + host);
+        console.log("protocol:" + protocol);
+        var ctx
+                = /*[[@{/getUnitPrice}]]*/;
+                var idProduct = $('#product').val();
+        url = protocol + '//' + host + ctx + '/' + idProduct;
+        console.log("url:" + url);
+        $.getJSON(url, {
+            tags: "",
+            tagmode: "any",
+            format: "json"
+        }).fail(function () {
+            console.log("error");
+        })
+        .done(function (data) {
+            console.log("data:" + data);
+            $('#total').val(data.unitPrice);
+            $('#tax').val(data.tax);
+        }
+        );
+    }   
+    function downloadPDF(){
+          document.getElementById('download').style.visibility = 'hidden'; 
+    }
+</script>                                           
+</body>
+
+</html>

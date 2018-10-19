@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+    <th:block th:if="${editModeStudent == false}">    
+        <title th:text="#{dashboard.student.addstudent.title}"></title>
+    </th:block>   
+    <th:block th:if="${editModeStudent == true}">    
+        <title th:text="#{dashboard.student.editstudent.title}"></title>
+    </th:block>   
+    <!-- Bootstrap Core CSS -->
+    <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <!-- MetisMenu CSS -->
+    <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+    <!-- Morris Charts CSS -->
+    <!--
+    <link href="../../../bzk/resources/vendor/morrisjs/morris.css"   th:href="@{/resources/vendor/morrisjs/morris.css}" rel="stylesheet">
+    -->
+    <!-- Custom Fonts -->
+    <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+
+    <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+    <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+    <!-- jQuery -->
+    <!--   <script src="../../../bzk/resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>-->
+    <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+    <!--Moment-->
+    <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>   
+    <!--bootstrap-datetimepicker-->
+    <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+
+    <script type="text/javascript" src="" th:src="@{/resources/moment/locate/es.js}"  charset="UTF-8"></script>
+    <script type="text/javascript" src="" th:src="@{/resources/js/bootbox.min.js}"  ></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav th:replace="fragments/components :: navMainMenu">
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                        <h3 class="page-header" th:text="#{dashboard.student.addstudent.form.edit}">Form user</h3>                         
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend}"></small></p>                                
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend2}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend3}"></small></p>
+                            <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend4}"></small></p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row" id="main">
+
+                                <div class="col-md-8 order-md-1">
+                                    <form class="needs-validation" action="#" method="post"  th:action="@{${formAction}}" name="personalInfoForm" th:object="${personalInfoForm}"  >
+                                            <div class="col-md-6 mb-1">
+                                                <label for="firstName" th:text="#{dashboard.student.addstudent.form.firstName}">First name</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required th:field="*{firstName}" maxlength="40" th:attr="disabled=${disabled}" /> 
+                                            </div>
+                                            <div class="col-md-6 mb-1">
+                                                <label for="lastName" th:text="#{dashboard.student.addstudent.form.Surname}">Surname</label>
+                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                <input type="text" class="form-control" id="surname" placeholder="" value="" required th:field="*{surname}" maxlength="40" th:attr="disabled=${disabled}" />                                                 
+                                            </div>
+                                                                               
+                                            <div class="col-md-4 mb-1" >
+                                                <label for="email" th:text="#{dashboard.student.addstudent.form.email1}">Email <span class="text-muted">(Optional)</span></label>                                             
+                                                <input type="email" class="form-control" id="email" placeholder="you@example.com" th:field="*{email}"  th:attr="disabled=${disabled}" />
+                                            </div>                             
+                                            
+                                            <div class="col-md-12 mb-1" id="myButtons">
+                                                <button type="submit" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.save}">Subir los cambios</button>
+                                                <button type="reset" id="cleanForm" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.clear}">Limpiar los datos</button>
+                                            </div>    
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- page-wrappe -->
+                </div>
+                <!--wrapper-->
+
+                </body>
+
+                </html>

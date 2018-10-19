@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="ctx" th:content="@{/}" />
+
+        <title th:text="#{dashboard.products.products.title}"></title>
+        <!-- Bootstrap Core CSS -->
+        <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+        <!-- MetisMenu CSS -->
+        <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+        <!-- Custom CSS -->
+        <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+        <link rel="stylesheet" type="text/css" th:href="@{/resources/css/animate.min.css}">
+
+        <link rel="stylesheet" type="text/css" th:href="@{/resources/css/datatables.min.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/resources/css/dataTables.bootstrap.css}">
+        <!-- Custom Fonts -->
+        <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+        <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+
+        <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+
+        <!-- jQuery -->
+        <!--   <script src="../../../bzk/resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>-->
+        <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+        <!-- DataTables JavaScript -->
+        <script src="" th:src="@{/resources/vendor/datatables/js/jquery.dataTables.min.js}"></script>
+        <script src="" th:src="@{/resources/vendor/datatables-plugins/dataTables.bootstrap.min.js}"></script>
+        <script src="" th:src="@{/resources/vendor/datatables-responsive/dataTables.responsive.js}"></script>
+        <!--Moment-->
+        <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>
+        <!--bootstrap-datetimepicker-->
+        <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+
+        <script type="text/javascript" src="" th:src="@{/resources/moment/locate/es.js}"  charset="UTF-8"></script>
+
+        <script type="text/javascript" src="" th:src="@{/resources/js/jsrender.min.js}"></script>
+        <script type="text/javascript" src="" th:src="@{/resources/js/jsviews.min.js}"></script>
+        <script type="text/javascript" src="" th:src="@{/resources/js/bootbox.min.js}"  ></script>  
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+
+    <body>
+
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <nav th:replace="fragments/components :: navMainMenu">
+            </nav>
+
+            <div id="page-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header" th:text="#{dashboard.products.products.title}">Formulario de registros de pagos de estudiante</h3>                    
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend}"></small></p>
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend1}"></small></p>
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend2}"></small></p>
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend3}"></small></p>
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend4}"></small></p>
+                                <p class="text-info" ><small th:text="#{dashboard.products.form.legend5}"></small></p>
+                            </div>
+                            <div class="panel-body" id="panelMain">                                                                                                   
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" th:text="#{dashboard.products.form.detailOfThePayments}">                                                            
+                                            </div>
+                                            <th:block   th:if="${not #lists.isEmpty(listError)}">
+                                                <div th:replace="fragments/components :: alert (type='danger', message='El formulario tiene errores. Compruebe la información.')">Alert</div>
+                                            </th:block>
+                                            <div class="panel-body">
+                                                <form class="needs-validation" action="#" method="post"  th:action="@{/addProducts}" name="productsFormAdd" th:object="${productsForm}" id="productsFormaAdd" >
+                                                    <div class="col-md-8 order-md-1">                                                                                    
+                                                        <div class="row">                                                                                              
+                                                            <div class="col-md-12 mb-1">
+                                                                <label for="Comentarios" th:text="#{dashboard.products.description}">description</label>  
+                                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                                <input type="text" class="form-control" id="description" placeholder="" value=""  size="80" th:field="*{description}" maxlength="80" th:attr="disabled=${disabled}" name="description"/>                                                 
+                                                            </div>
+                                                            <div class="col-md-4 mb-1">
+                                                                <label for="weight" th:text="#{dashboard.products.unitPrice}">unitPrice</label>
+                                                                <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                                <input type="number" class="form-control" id="total" placeholder="" value="" required   maxlength="7" step="0.01"  th:field="*{unitPrice}" th:attr="disabled=${disabled}" name="unitPrice"/>
+                                                            </div>
+                                                            <div class="col-md-4 mb-1">
+                                                                <label for="height" th:text="#{dashboard.products.tax}">Impuesto</label>                                                    
+                                                                <input type="number" class="form-control" id="tax" placeholder="" value="" required   maxlength="3" step="0.01" th:field="*{tax}"  name="tax"/>
+                                                            </div>
+														<div class="col-md-4 mb-1">
+															<label th:text="#{maintenance.product.types}">Seleccione
+																el tipo de producto</label> <b><lebel class="text-danger"
+																	th:text="#{dashboard.general.requiredField}">
+																Campo requerido.</lebel></b> <select class="form-control"
+																id="typeProduct" required th:field="*{typeProduct}"
+																th:attr="disabled=${disabled}"
+																name="typeProduct">
+																<option value="0">--</option>
+																<option th:each="entry : ${typeProducts.entrySet()}"
+																	th:value="${entry.key}" th:utext="${entry.value}"
+																	th:field="*{typeProduct}" />
+															</select>
+														</div>
+														<div class="col-lg-12">
+
+                                                            </div>
+
+                                                            <div class="col-md-12 mb-1">                                                                                                                                                                                                                                              
+                                                                <button type="submit" class="btn-success btn-xs add" id="addProducts" th:text="#{dashboard.payment.form.addProduct}" >Primary</button>                                                 
+                                                            </div>
+
+                                                        </div>                                         
+                                                    </div>
+                                                </form>     
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- -->
+                                <div class="row">
+                                    <div class="col-lg-12">                                            
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" th:text="#{dashboard.products.productsUpdate}">
+                                            </div>                                             
+                                            <!-- /.panel-heading -->
+                                            <div class="panel-body">          
+                                                <form class="needs-validation" action="#" method="post"  th:action="@{/updateProducts}" name="productsFormUpdate" th:object="${productsForm}" id="productsFormUpdate" >     
+                                                    <div class="table-responsive">                                                     
+                                                        <table width="100%" class="table table-striped table-bordered table-hover" id="products">
+                                                            <thead >
+                                                                <tr>                                                                
+                                                                    <th  th:text="#{dashboard.products.description}">description</th>
+                                                                    <th  th:text="#{dashboard.products.dateRegistration}">dateRegistration</th>                                                                
+                                                                    <th  th:text="#{dashboard.products.unitPrice}">unitPrice</th>
+                                                                    <th  th:text="#{dashboard.payment.form.productTax}">Tax</th> 
+                                                                    <th  th:text="#{dashboard.products.form.accion}">Accion</th> 
+                                                                </tr>
+                                                            </thead>                                                                      
+                                                            <tbody th:if="${not #lists.isEmpty(productsForm.listDto)}">
+                                                                <tr class="odd gradeX" th:each="dto,rowStat: ${productsForm.listDto}" >                                                    
+                                                                    <td th:text="${dto.description}" class="center"></td>
+                                                                    <td th:text="${dto.dateRegistration}" class="center">dateRegistration</td>
+                                                                    <td class="center"> <input type="number" class="form-control" id="price" placeholder="" value="" required   maxlength="7" step="0.01"  th:field="*{listDto[__${rowStat.index}__].price}" th:attr="disabled=${disabled}" name="price"/></td>
+                                                                    <td class="center"> <input type="number" class="form-control" id="tax" placeholder="" value="" required   maxlength="3" step="0.01"  th:field="*{listDto[__${rowStat.index}__].tax}" th:attr="disabled=${disabled}" name="tax"/></td> 
+                                                                    <td>
+                                                                        <select class="form-control"  id="accion" name="accion" required th:field="*{listDto[__${rowStat.index}__].accion}" th:attr="disabled=${disabled}" >
+                                                                            <option value="0"> -- </option>
+                                                                            <option th:each="accion : ${accions}"   th:value="${accion.id}" th:utext="${accion.description}" th:field="*{listDto[__${rowStat.index}__].accion}" />
+                                                                        </select>
+                                                                    </td>
+                                                            <input type="hidden" class="form-control" id="idProduct" placeholder="" value="" required    th:field="*{listDto[__${rowStat.index}__].idProduct}"  name="idProduct"/>
+                                                            </tr>
+
+                                                            </tbody>
+                                                        </table>                                                        
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-1">
+                                                            <button type="submit" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.products.update}" >Subir los cambios</button>                                                                
+                                                        </div>                                    
+                                                    </div>     
+                                                </form> 
+                                                <!-- /.table-responsive -->                                         
+                                            </div>
+                                            <!-- /.panel-body -->                                           
+                                        </div>
+                                        <!-- /.panel -->
+                                    </div>
+                                    <th:block th:if="${not #strings.isEmpty(generalModalMessage)}">   
+                                        <script th:inline="javascript"  type="text/javascript">
+                                            $(window).on('load', function () {
+                                                $('#modalMessage').modal('show');
+                                            });
+                                        </script>
+                                        <div th:replace="fragments/components :: modal(id='modalMessage', title='Mantenimiento de producto')"></div>                                                
+                                    </th:block>                                
+                                </div>		                                                                                                                                    
+                                <!-- /.panel-body -->
+                            </div>
+                            <!-- /.panel -->
+                        </div>
+                        <!-- /.col-lg-6 -->
+                    </div> 
+                    <!-- /.row (nested) -->
+                </div>
+                <!-- /.row -->
+            </div>	
+            <!-- page-wrappe -->
+        </div>
+    </div>
+</div>
+</div>
+<!--wrapper-->
+<script th:inline="javascript" type="text/javascript">
+    var details = [];
+    var descDetails = [];
+    var cont = 1;
+    $(document).ready(function () {
+        $('#products').DataTable({
+            responsive: true,
+            "language": {
+                "decimal": "",
+                "emptyTable": "No hay datos de productos..",
+                "info": "Muestra _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando de 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado from _MAX_ total de registros)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Muestra _MENU_ Registros",
+                "loadingRecords": "Bajando...",
+                "processing": "Procesando...",
+                "search": "Busqueda:",
+                "zeroRecords": "No hay registros encontrados",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Siguiente",
+                    "previous": "Previa"
+                },
+                "aria": {
+                    "sortAscending": ": activado el ordenamiento de columna de forma acendente",
+                    "sortDescending": ": activado el ordenamiento de columna de forma decendente"
+                }
+            }
+        });
+    });
+
+</script>                                           
+</body>
+
+</html>

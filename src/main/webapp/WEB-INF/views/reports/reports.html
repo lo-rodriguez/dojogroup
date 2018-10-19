@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <!--
+    To change this license header, choose License Headers in Project Properties.
+    To change this template file, choose Tools | Templates
+    and open the template in the editor.
+    -->
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="description" content="">
+            <meta name="author" content="">
+
+               <!-- Bootstrap Core CSS -->
+            <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+            <!-- MetisMenu CSS -->
+            <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>     
+
+			<!-- Custom CSS -->
+            <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>			
+			
+			<!-- Custom Fonts -->
+            <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+            <link href=""  th:href="@{/resources/vendor/datatables-plugins/dataTables.bootstrap.css}" rel="stylesheet">
+            <link rel="icon" type="image/png"  th:href="@{/resources/images/logo.png}"/>
+
+            <!-- DataTables Responsive CSS -->
+            <link href="" th:href="@{/resources/vendor/datatables-responsive/dataTables.responsive.css}" rel="stylesheet">
+
+            <link href="" th:href="@{/resources/css/rowGroup.dataTables.min.css}" rel="stylesheet"/>
+            <link href="" th:href="@{/resources/css/jquery.dataTables.min.css}" rel="stylesheet"/>                                
+
+            <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+
+            <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+
+            <!-- Bootstrap Core JavaScript -->
+            <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+            <!-- Metis Menu Plugin JavaScript -->
+            <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+            <!-- DataTables JavaScript -->
+            <script src="" th:src="@{/resources/vendor/datatables/js/jquery.dataTables.min.js}"></script>
+            <script src="" th:src="@{/resources/vendor/datatables-plugins/dataTables.bootstrap.min.js}"></script>
+            <script src="" th:src="@{/resources/vendor/datatables-responsive/dataTables.responsive.js}"></script>
+            <!-- Morris Charts JavaScript -->
+            <script src="" th:src="@{/resources/vendor/raphael/raphael.min.js}"></script>
+			
+			 <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+            <!-- Custom Theme JavaScript -->
+            <script src="" th:src="@{/resources//js/dataTables.rowGroup.min.js}"></script>
+
+            <!--Moment-->
+            <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/moment/locate/es.js}"  charset="UTF-8"></script>
+            <!--bootstrap-datetimepicker-->
+            <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+            <!--IMP PDF Y EXCEL-->
+
+            <script type="text/javascript" src="" th:src="@{/resources/js/pdfmake.min.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/js/vfs_fonts.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/js/jquery.dataTables.min.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/js/dataTables.buttons.min.js}"></script>  
+            <script type="text/javascript" src="" th:src="@{/resources/js/jszip.min.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/js/buttons.html5.min.js}"></script>
+            <script type="text/javascript" src="" th:src="@{/resources/js/buttons.print.min.js}"></script>
+            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+            <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+        </head>
+        <style>
+			.hide {
+				display: none;
+			}
+		</style>
+        <body>
+
+            <div id="wrapper">
+                <nav th:replace="fragments/components :: navMainMenu">
+                </nav>
+                <div id="page-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <th:block th:if="${viewOp == 0}">   
+                                <h3 class="page-header" th:text="#{dashboard.report.generalStudentReport}"></h3>
+                            </th:block>
+                            <th:block th:if="${viewOp == 1}">   
+                                <h3 class="page-header" th:text="#{dashboard.report.administrativeReport}"></h3>
+                            </th:block>
+                            <th:block th:if="${viewOp == 2}">   
+                                <h3 class="page-header" th:text="#{dashboard.report.paymentHistoryBystudent}"></h3>
+                            </th:block>
+                            <th:block th:if="${viewOp == 3}">   
+                                <h3 class="page-header" th:text="#{dashboard.report.receiptsReport}"></h3>
+                            </th:block>
+                            <th:block th:if="${viewOp == 4}">   
+                                <h3 class="page-header" th:text="#{dashboard.report.reportForDownload}"></h3>
+                            </th:block>
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="text-info" ><small th:text="#{dashboard.report.legend}"></small></p>                                
+                                    <p class="text-info" ><small th:text="#{dashboard.report.legend1}"></small></p>
+                                    <p class="text-info" ><small th:text="#{dashboard.report.legend2}"></small></p>                                        
+                                </div>
+                                <div class="panel-body">                                  
+                                    <form class="needs-validation" action="#" method="post"  th:action="@{${formAction}}" name="reportForm" th:object="${reportForm}"  >
+                                        <div class="row">                                     
+                                            <th:block th:if="${activateDatesRanges == true}">
+                                                <div class="col-md-4 mb-1">                                              
+                                                    <label for="datePayment" th:text="#{dashboard.report.initialPaymentDate}">Fecha de pago</label>
+                                                    <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                    <div class="input-group date" id="datePayIni" >
+                                                        <input type="text" class="form-control" required th:field="*{initialDate}" th:attr="disabled=${disabled}" th:value="*{initialDate}"/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>                                                     
+                                                </div>
+                                                <div class="col-md-4 mb-1">                                              
+                                                    <label for="datePayment1" th:text="#{dashboard.report.finalPaymentSate}">Fecha de pago</label>
+                                                    <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                    <div class="input-group date" id="datePayEnd" >
+                                                        <input type="text" class="form-control" required th:field="*{finalDate}" th:attr="disabled=${disabled}" th:value="*{finalDate}"/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>                                                     
+                                                </div> 
+                                                <script th:inline="javascript"  type="text/javascript">
+                                                            $(function () {
+                                                            $('#datePayIni').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${initialDate}]]*/));
+                                                            });
+                                                            $(function () {
+                                                            $('#datePayEnd').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${finalDate}]]*/));
+                                                            });                                               
+                                              </script>   
+                                            </th:block>
+                                            <th:block th:if="${activateTypePayMentRecipts == true}">
+                                                <div class="col-md-4">
+                                                    <label th:text="#{dashboard.payment.form.typesOfpayments}">Seleccione el tipo de pago</label>
+                                                    <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                    <select class="form-control"  id="typePayment" name="typePayment" required th:field="*{typePayment}"  th:attr="disabled=${disabled}" >
+                                                        <option value="0"> -- </option>
+                                                        <option th:each="typePayment : ${typesPayments}"   th:value="${typePayment.id}" th:utext="${typePayment.description}" th:field="*{typePayment}"/>
+                                                    </select>
+                                                </div>                                   
+                                                <div class="col-md-4 mb-1">
+                                                    <label for="identificationCard" th:text="#{dashboard.report.initialReceipt}">initialReceipt</label>            
+                                                    <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                    <input type="text" class="form-control" id="initialReceipt" placeholder="" value="" th:field="*{initialReceipt}" required maxlength="8" th:attr="disabled=${disabled}" />
+                                                </div> 
+                                                <div class="col-md-4 mb-1">
+                                                    <label for="identificationCard" th:text="#{dashboard.report.finalReceipt}">Cedula</label>            
+                                                    <strong  class="text-danger" th:text="#{dashboard.general.requiredField}"> Campo requerido.</strong>
+                                                    <input type="text" class="form-control" id="finalReceipt" placeholder="" value="" th:field="*{finalReceipt}" required maxlength="8" th:attr="disabled=${disabled}" />
+                                                </div> 
+                                            </th:block>
+
+                                            <th:block th:if="${activeProducts == true}">
+                                                <div class="col-md-4 mb-1">
+                                                    <label th:text="#{dashboard.dashboard.productos}">Seleccione el producto</label>                                                  
+                                                    <select class="form-control"  id="typeProduct"  required th:field="*{typeProduct}"  th:attr="disabled=${disabled}"    name="typeProduct">
+                                                        <option value="0"> -- </option>
+                                                        <option th:each="entry : ${products.entrySet()}"   th:value="${entry.key}" th:utext="${entry.value}" th:field="*{typeProduct}" />
+                                                    </select>
+                                                </div> 
+                                            </th:block>  
+                                            <th:block th:if="${activePaymentHistoryStudent== true}">
+                                                <div class="col-md-8 mb-1">
+                                                    <label th:text="#{dashboard.student}">Seleccione el estudiante</label>
+                                                    <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                    <select class="form-control selectpicker"  id="idStudent" required th:field="*{idStudent}"  th:attr="disabled=${disabled}"  data-live-search="true" name="idStudent">                                                                                                                             
+                                                        <option th:each="idStudent : ${descriptionStudents}"   th:value="${idStudent.id}" th:utext="${idStudent.description}" th:field="*{idStudent}"/>
+                                                    </select>                                             
+                                                </div>
+                                            </th:block>      
+                                        </div> 
+                                        <div class="panel-body">
+                                            <div class="row">                                   
+                                                <div class="col-md-4 mb-1">
+                                                    <button type="submit" class="btn btn-outline btn-primary" th:text="#{dashboard.report.generic.search.button}">                                             
+                                                    </button><span class="glyphicon glyphicon-search" ></span>                                                                               
+                                                </div> 
+                                            </div>
+                                        </div>  
+                                    </form>
+                                </div>       
+                            </div>
+                            <div class="panel-body">                              
+                                <div class="row"> 
+                                    <th:block th:if="${viewOp == 0}"> 
+                                        <div class="table-responsive">
+                                            <table th:replace="fragments/components ::stateStudentAccount"></table>
+                                        </div>                                      
+                                    </th:block>
+                                    <th:block th:if="${viewOp == 1}"> 
+                                        <div class="table-responsive">
+                                            <table th:replace="fragments/components ::administrativeReport"></table>
+                                        </div>                                      
+                                    </th:block>   
+                                    <th:block th:if="${viewOp == 2}">                                              
+                                        <!---->
+                                        <div class="row" th:if="${profileStudent}">
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-3">
+                                                <div class="well well-sm">
+                                                    <div class="row">
+                                                        <div class="col-sm-4 col-md-6 col-lg-7">
+                                                            <th:block th:if="${showImage == true}"> 
+                                                                <img th:src="@{/studentImage/{idStudent}(idStudent=${reportForm.idStudent})}" alt="Student photo" class="img-rounded img-responsive" />
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="col-sm-8 col-md-6 col-lg-5">
+                                                            <p><strong th:text="${profileStudent.name}"></strong></p>
+                                                            <small><cite th:text="${profileStudent.address}"><i class="glyphicon glyphicon-map-marker"></i></cite></small>
+                                                            <p>
+                                                                <i class="glyphicon glyphicon-envelope" th:text="${profileStudent.email}"></i>                                                             
+                                                            </p>
+                                                            <div class="btn-group">
+                                                                <p class="card-text" th:text="${profileStudent.docId}">DocId.</p>
+                                                                <p class="card-text" th:text="${profileStudent.category}">Category.</p>                                                
+                                                                <p class="card-text" th:text="${profileStudent.telephone}">Telephone</p>
+                                                                <p class="card-text" th:text="${profileStudent.registrationDate}">Telephone</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="table-responsive">
+                                            <table th:replace="fragments/components ::paymentHistoryBystudent"></table>
+                                        </div>                                        
+                                    </th:block> 
+                                    <th:block th:if="${viewOp == 3}">  
+                                        <div class="table-responsive">
+                                            <table th:replace="fragments/components ::receiptsReport"></table>
+                                        </div>    
+                                    </th:block> 
+                                    <th:block th:if="${viewOp == 4}">  
+                                        <div class="table-responsive">
+                                            <table th:replace="fragments/components ::reportForDownload"></table>
+                                        </div>    
+                                    </th:block>
+                                </div>
+                            </div>                             
+                        </div>
+                    </div>
+                </div>
+                <th:block th:if="${not #strings.isEmpty(generalModalMessage)}">     
+                    <script th:inline="javascript"  type="text/javascript">
+                                $(window).on('load', function () {
+                        $('#modalMessage').modal('show');
+                    });                       
+                     </script>
+                    <div th:replace="fragments/components :: modal(id='modalMessage', title='Error en la busqueda')"></div>                                                
+                </th:block>
+            </div>
+            <script th:inline="javascript"  type="text/javascript">
+                var rowCount = $('#dataTables-report tr').length;               
+                console.log('rowCount:' + rowCount);               
+				var numCols = $("#dataTables-report").find('tr')[0].cells.length;		
+				console.log('numCols: ' + numCols);
+                $(document).ready(function () {
+                if (rowCount > 1){
+                $('#dataTables-report').DataTable({
+                responsive: true,              
+                        "language": {
+                        "decimal": "",
+                                "emptyTable": "No hay datos de estudiante..",
+                                "info": "Muestra _START_ a _END_ de _TOTAL_ entradas",
+                                "infoEmpty": "Mostrando de 0 a 0 de 0 entradas",
+                                "infoFiltered": "(filtrado from _MAX_ total de registros)",
+                                "infoPostFix": "",
+                                "thousands": ",",
+                                "lengthMenu": "Muestra _MENU_ Registros",
+                                "loadingRecords": "Bajando...",
+                                "processing": "Procesando...",
+                                "search": "Busqueda de registro:",
+                                "zeroRecords": "No hay registros encontrados",
+                                "paginate": {
+                                "first": "Primera",
+                                        "last": "Ultima",
+                                        "next": "Siguiente",
+                                        "previous": "Previa"
+                                },
+                                "aria": {
+                                "sortAscending": ": activado el ordenamiento de columna de forma acendente",
+                                        "sortDescending": ": activado el ordenamiento de columna de forma decendente"
+                                }
+                        }
+                ,
+                        "createdRow": function (row, data, index) {
+                        var $tds = $('#dataTables-report tr > td:nth-child(5)').filter(function () {
+                        return $.trim($(this).text());
+                        });
+                                if ($tds.length > 0) {
+                        if (data[5].startsWith("$", 0)){
+                        $('td', row).eq(5).addClass('highlight');
+                                $("tr:last").css({ backgroundColor: "#e6f9ff", fontWeight: "bolder" });
+                        }
+                        }
+                        },                      
+                        dom: 'Bfrtip',
+                        buttons: [
+                        { extend: 'excelHtml5',   exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {  
+                                	var indexOfFirst = data.indexOf('</span>');                                                        	                                                	                              
+                                    if(numCols==7 && (column >0 && column <3)){
+                                     return processDate(data);
+                                     }                                    
+                                    else if(numCols<7 && column ==0 && indexOfFirst>0){
+                                     return processDate(data);
+                                    }
+                                    else 
+                                    return data;                                                                                                            
+                                }
+                            }
+                        }, footer: true, title: /*[[${reportHeaderDTO.title}]]*/, filename:/*[[${reportHeaderDTO.namefile}]]*/ },
+                        { extend: 'csvHtml5',  exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {  
+                                	var indexOfFirst = data.indexOf('</span>');                                                        	                                                	                              
+                                    if(numCols==7 && (column >0 && column <3)){
+                                     return processDate(data);
+                                     }                                    
+                                    else if(numCols<7 && column ==0 && indexOfFirst>0){
+                                     return processDate(data);
+                                    }
+                                    else 
+                                    return data;                                                                                                            
+                                }
+                            }
+                        },footer: true, filename:/*[[${reportHeaderDTO.namefile}]]*/ }
+                        ]
+                });
+                }
+                });
+                function processDate(data){
+                	data=data.replace('<span class="hide">','');
+                	data=data.replace('</span><span>','');
+                	data=data.replace('</span>','');                                    	
+                	data=data.replace(/^([0-9]{4}[-/]?((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))|([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00)[-/]?02[-/]?29)/,'');
+                	var nData =null;
+                	var arrayOfStrings = data.split('/');
+                	if(arrayOfStrings.length == 1){                                    
+                		return '';
+                    }
+                	else{                                   
+                		nData = moment(data, 'DD/MM/YYYY');
+                    }
+                	return nData.local().format('DD/MM/YYYY');
+                    }                                   
+            </script>
+        </body>   
+    </html>

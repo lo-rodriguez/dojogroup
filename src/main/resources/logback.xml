@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="3 seconds">
+    <contextName>my-artifactId</contextName>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{32} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+   
+<!-- CONFIGURACION PARA PRODUCCION
+      <appender name="file" class="ch.qos.logback.core.ConsoleAppender">
+        <param name="File" value="${sys:user.home}/appBZK.log"/>
+
+        <param name="Append" value="true" />
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{32} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+-->
+    <jmxConfigurator />
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <logger name="com.dojogrouppty" level="ALL" />
+  <!--  <logger name="org.hibernate.SQL" level="DEBUG" />
+    <logger name="org.hibernate.type" level="TRACE" />
+    <logger name="org.springframework.data.jpa.repository" level="ALL" />
+    <logger name="org.springframework.data.jpa.repository.JpaRepository" level="ALL" />
+    -->
+</configuration>

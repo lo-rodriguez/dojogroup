@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content=""> 
+        <!-- Bootstrap Core CSS -->
+        <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+        <!-- MetisMenu CSS -->
+        <link href="" th:href="@{/resources/vendor/metisMenu/metisMenu.min.css}" rel="stylesheet"/>
+
+        <!-- Custom CSS -->
+        <link href="" th:href="@{/resources/dist/css/sb-admin-2.css}" rel="stylesheet"/>
+
+        <link href="" th:href="@{/resources/fullcalendar-3.9.0/fullcalendar.css}" rel="stylesheet" />
+        <link href="" th:href="@{/resources/fullcalendar-3.9.0/fullcalendar.print.css}" rel="stylesheet" media="print" />
+
+        <!-- Morris Charts CSS -->
+        <!--
+        <link href="../../../bzk/resources/vendor/morrisjs/morris.css"   th:href="@{/resources/vendor/morrisjs/morris.css}" rel="stylesheet">
+        -->
+        <!-- Custom Fonts -->
+        <link href="" th:href="@{/resources/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+
+        <link href="" th:href="@{/resources/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+
+        <!-- jQuery -->
+        <!--   <script src="../../../bzk/resources/js/jquery.min.js" th:src="@{/resources/js/jquery.min.js}"></script>-->
+        <script src="" th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+        <script src="" th:src="@{/resources/vendor/jquery/jquery.js}"></script>
+        <script src="" th:src="@{/resources/js/jquery-ui.custom.min.js}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="" th:src="@{/resources/vendor/bootstrap/js/bootstrap.min.js}"></script>
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="" th:src="@{/resources/vendor/metisMenu/metisMenu.min.js}"></script>
+
+        <!-- Morris Charts JavaScript -->
+        <!--
+        <script src="" th:src="@{/resources/vendor/raphael/raphael.min.js}"></script>
+        -->
+        <!-- <script src="../../../bzk/resources/vendor/morrisjs/morris.min.js" th:src="@{/resources/vendor/morrisjs/morris.min.js}"></script>-->
+        <!--
+         <script src="../../../bzk/resources/data/morris-data.js" th:src="@{/resources/data/morris-data.js}"></script>
+        -->
+        <!-- Custom Theme JavaScript -->
+        <script src="" th:src="@{/resources/dist/js/sb-admin-2.js}"></script>
+
+        <!--Moment-->
+        <script type="text/javascript" src="" th:src="@{/resources/moment/min/moment.min.js}"></script>
+        <!--bootstrap-datetimepicker-->
+        <!--
+        <script type="text/javascript" src="" th:src="@{/resources/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+        -->
+        <script type="text/javascript" src="" th:src="@{/resources/fullcalendar-3.9.0/locale/es.js}"  charset="UTF-8"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <script src="" th:src="@{/resources/fullcalendar-3.9.0/fullcalendar.min.js}"></script>   
+        <script th:inline="javascript" type="text/javascript">
+            function mostrarPropiedades(objeto, nombreObjeto) {
+                var resultado = "";
+                for (var i in objeto) {
+                    if (objeto.hasOwnProperty(i)) {
+                        resultado += nombreObjeto + "." + i + " = " + objeto[i] + listaTodasLasPropiedades(i) + "\n";
+                    }
+                }
+                return resultado;
+            }
+            function listaTodasLasPropiedades(o) {
+                var objetoAInspeccionar;
+                var resultado = [];
+                for (objetoAInspeccionar = o; objetoAInspeccionar !== null; objetoAInspeccionar = Object.getPrototypeOf(objetoAInspeccionar)) {
+                    resultado = resultado.concat(Object.getOwnPropertyNames(objetoAInspeccionar)) + "\n";
+                }
+
+                return resultado;
+            }
+            var host = window.location.host;
+            var protocol = window.location.protocol;
+            var allActivities
+                    = /*[[@{/allActivities}]]*/;
+            var addActivity
+                    = /*[[@{/addActivity}]]*/;
+            var urlsearch = protocol + '//' + host + allActivities;
+            var addService = protocol + '//' + host + addActivity;
+            $(document).ready(function () {
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    themeSystem: 'bootstrap3',
+                    defaultDate: new Date(),
+                    editable: true,
+                    selectable: true,
+                    selectHelper: true,                 
+                    buttonText: {
+                        listMonth: ' Lista del mes ',
+                        listYear: ' Lista del año ',
+                        listWeek: ' Lista de la semana ',
+                        listDay: ' Lista del dia ',
+                        today: 'hoy',
+                        month: 'mes',
+                        week: 'semana',
+                        day: 'dia',
+                        list: 'lista'
+                    },
+                    select: function (start, end) {
+                        var title = prompt('Actividades BZK:');
+                        var eventData;
+                        if (title) {
+                            eventData = {
+                                title: title,
+                                start: start,
+                                end: end
+                            };
+                            urlAdd = addService+'/'+start+'/'+end+'/'+title;
+                            console.log("url:" + urlAdd);
+                                $.getJSON(urlAdd, {
+                                                        tags: "",
+                                                        tagmode: "any",
+                                                        format: "json"
+                                                    }).fail(function () {
+                                                        console.log("error");
+                                                    })
+                                                     .done(function (data) {
+                                                                console.log("data:" + data);                                                                                                                           
+                                                            }
+                                                     );
+                            $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                        }
+                        $('#calendar').fullCalendar('unselect');
+                    },
+                    locale: 'es',
+                    eventLimit: true, // allow "more" link when too many events
+                    events: {
+                        url: urlsearch,
+                        type: 'GET',
+                        error: function () {
+                            alert('there was an error while fetching events!');
+                        },
+                        //color: 'blue',   // a non-ajax option
+                        //textColor: 'white' // a non-ajax option
+                    }
+                });
+            });
+
+        </script>
+        <style th:inline="text">
+
+            /*  body {
+                  margin-top: 40px;
+                  text-align: center;
+                  font-size: 14px;
+                  font-family: "Helvetica Nueue",Arial,Verdana,sans-serif;
+                  background-color: #DDDDDD;
+              }*/
+
+            #wrap {
+                width: 1100px;
+                margin: 0 auto;
+            }
+
+            #external-events {
+                float: left;
+                width: 150px;
+                padding: 0 10px;
+                text-align: left;
+            }
+
+            #external-events h4 {
+                font-size: 16px;
+                margin-top: 0;
+                padding-top: 1em;
+            }
+
+            .external-event { /* try to mimick the look of a real event */
+                margin: 10px 0;
+                padding: 2px 4px;
+                background: #3366CC;
+                color: #fff;
+                font-size: .85em;
+                cursor: pointer;
+            }
+
+            #external-events p {
+                margin: 1.5em 0;
+                font-size: 11px;
+                color: #666;
+            }
+
+            #external-events p input {
+                margin: 0;
+                vertical-align: middle;
+            }
+
+            #calendar {
+                /* 		float: right; */
+                margin: 0 auto;
+                width: 900px;
+                background-color: #FFFFFF;
+                border-radius: 6px;
+                box-shadow: 0 1px 2px #C3C3C3;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <nav th:replace="fragments/components :: navMainMenu">
+            </nav>
+
+
+            <!-- Page Content -->
+            <div id="page-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header" th:text="#{dashboard.activities.title}">Calendario de actividades de BZK</h3>                    
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <p class="text-info" ><small th:text="#{dashboard.activities.legend}"></small></p>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div id='calendar'></div>
+                                    <div style='clear:both'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--col-lg-12-->
+                </div>
+                <!--row-->
+            </div>
+            <!-- /#page-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+
+    </body>
+
+</html>
