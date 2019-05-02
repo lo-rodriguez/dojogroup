@@ -6,14 +6,18 @@
 package com.dojogrouppty.students;
 
 import com.dojogrouppty.catalogs.CatalogsService;
+import com.dojogrouppty.common.DateUtils;
 import com.dojogrouppty.common.ParentControllerService;
 import com.dojogrouppty.common.STATUS;
 import com.dojogrouppty.error.GenericBZKException;
+import com.dojogrouppty.reports.ReportForm;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,12 +133,15 @@ public class StudentService extends ParentControllerService {
         logger.debug("Saliendo del metodo getStudentsEnable..");
         return listDto;
     }
+    public List<DescriptionStudentDTO> getDescriptionStudentDTO(){
+    	return getDescriptionStudentDTO(0L);
+    }
     /**
      * Get all Description of active student
      * @return List DescriptionStudentDTO
      */
     @SuppressWarnings("unchecked")
-     public List<DescriptionStudentDTO> getDescriptionStudentDTO() {
+     public List<DescriptionStudentDTO> getDescriptionStudentDTO(Long idStudent) {
         logger.debug("In getStudentsEnable..");
         ArrayList<DescriptionStudentDTO> listDto = new ArrayList<DescriptionStudentDTO>();
         Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_STUDENTS_STATUS_1);
@@ -155,6 +162,9 @@ public class StudentService extends ParentControllerService {
                         + "DESCRIPTION:[" + dto.getDescription() + "]");
 
             }
+        }
+        if(idStudent>0L) {
+        	listDto.removeIf(n->(!n.getId().equals(idStudent)));
         }
         logger.debug("Saliendo del metodo getStudentsEnable..");
         return listDto;
@@ -333,4 +343,5 @@ public class StudentService extends ParentControllerService {
       }
       return false;
     }
+
 }

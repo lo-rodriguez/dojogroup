@@ -19,6 +19,7 @@ public class ReportDetailDTO {
   private  String amount;
   private  String totalPerDay;
   private  String dateSubTotal;
+  private String comment; 
 
     public ReportDetailDTO() {
         this.date = "";
@@ -28,6 +29,7 @@ public class ReportDetailDTO {
         this.amount = "";
         this.totalPerDay = "";
         this.dateSubTotal  = "";
+        this.comment="";
         this.intDate=0;
     }
 
@@ -104,6 +106,14 @@ public class ReportDetailDTO {
 
 	public void setIntDate(Integer intDate) {
 		this.intDate = intDate;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
     
     

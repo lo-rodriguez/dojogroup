@@ -19,7 +19,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
  
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -27,7 +26,6 @@ public class TableSplitTest {
     public static final String DEST =  "D:/workspace/appBZK/receipts/splitting_and_rowspan001.pdf";
  
     public static void main(String[] args) throws IOException, DocumentException {
-        File file = new File(DEST);
         new TableSplitTest().createPdf(DEST);
     }
  

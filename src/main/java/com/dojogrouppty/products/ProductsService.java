@@ -48,8 +48,8 @@ public class ProductsService extends ParentControllerService {
     MessageSource messageSource;
     private static final Logger logger
             = LoggerFactory.getLogger(ProductsService.class);
-    private static Map <Integer,String> products = new  HashMap<Integer, String>();;
-    private static Map<Integer, String> sortByValue(Map<Integer, String> unsortMap) {
+    
+    private  Map<Integer, String> sortByValue(Map<Integer, String> unsortMap) {
 
         // 1. Convert Map to List of Map
         List<Map.Entry<Integer, String>> list
@@ -79,17 +79,16 @@ public class ProductsService extends ParentControllerService {
       * @return Map active products
       */
        public Map<Integer,String>   getActiveProducts(){
+    	   Map <Integer,String> products = new  HashMap<Integer, String>(); 
        logger.debug("Into method getProductActive..");
-       try {   
-       if(products==null || products.isEmpty()){        
+       try {        
         List <Object[]> listProducts = productsRepository.getProductsEnable();  
         logger.debug("ListProducts.size():%d",listProducts.size());
         
         for(Object[] objs:listProducts){
             products.put((Integer)objs[0],(String)objs[1]);
         }
-         products = sortByValue(products);
-       }
+         products = sortByValue(products);       
         
        }
        catch(Exception e){

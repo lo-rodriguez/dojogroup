@@ -19,6 +19,7 @@ private String enrollmentInTheCurrentMonth;
 private String enrollment;
 private String contractMonth;
 private String name;
+private Integer studentID;
 
     public ReportStateStudentAccountDTO() {
         this.lastMonthlyPayment ="";
@@ -30,6 +31,7 @@ private String name;
         this.name="";
         this.intPreviousAnnuityDate=0;
         this.intLastMonthlyPayment=0;
+        this.studentID=0;
     }
 
     public String getName() {
@@ -103,5 +105,14 @@ private String name;
 	public void setIntPreviousAnnuityDate(Integer intPreviousAnnuityDate) {
 		this.intPreviousAnnuityDate = intPreviousAnnuityDate;
 	}
+
+	public Integer getStudentID() {
+		return studentID;
+	}
+
+	public void setStudentID(Integer studentID) {
+		this.studentID = studentID;
+	}
+	
     
 }

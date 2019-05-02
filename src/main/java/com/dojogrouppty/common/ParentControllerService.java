@@ -72,6 +72,7 @@ public class ParentControllerService {
 	 */
 	public static final String FORMAT_DATE = "dd/MM/yyyy";
 	public static final String DATE_NULL = "31/12/2999";
+	public static final String DDMMYYYY_HHMMSS_24h = "dd/MM/yyyy".concat(" ").concat("HH:mm:ss");
 	/**
 	 * General constants
 	 */
@@ -93,6 +94,7 @@ public class ParentControllerService {
 	protected final static String ACCION_PRODUCTS_UPDATE = "/productsMaintenance";
 	protected final static String ACCION_GENERATE_REPORT = "/generateReport";
 	protected final static String ACCION_PAYMENT_STUDENT = "/paymentStudent";
+	protected final static String ACCION_REPORT_HISTORY_BY_STUDENT_ID = "/getHistoryByStudentID";
 	protected final static String FORM_ACCION_PAYMENT = "/payment";
 	protected final static String FORM_ACCION = "formAction";
 	protected final static String FORM_ACCION_OTHER = "formActionOther";
@@ -199,6 +201,7 @@ public class ParentControllerService {
 	protected static final String INITIAL_DATE = "initialDate";
 	protected static final String FINAL_DATE = "finalDate";
 	protected static final int DEFAULT_DAYS_FOR_SEARCH = -7;
+	
 	/**
 	 * Contans report activate controls
 	 */
@@ -254,6 +257,7 @@ public class ParentControllerService {
 	 */
 	protected static final String PARAMETER_DELETE_PDF = "DELETE_PDF";
 	protected static final String PARAMETER_YEAR_AGO = "YEAR_AGO";
+	protected static final String PARAMETER_NUMBER_OF_DAYS_SEARCH_HISTORY = "NUMBER_OF_DAYS_SEARCH_HISTORY";
 	/**
 	 * Error form product
 	 */
@@ -263,6 +267,7 @@ public class ParentControllerService {
 	 */
 	protected static final String CODE_DETELE = "1002";
 	protected static final String CODE_EDIT = "1001";
+	protected static final String CODE_NOTFOUND="999";
 	/**
 	 * User account
 	 */

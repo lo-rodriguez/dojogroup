@@ -60,11 +60,13 @@ public class ReportsController extends ParentControllerService {
         model.addAttribute(FORM_ACCION, ACCION_GENERATE_REPORT);
         model.addAttribute(REPORT_FORM_OBJ, new ReportForm());
         model.addAttribute(REPORT_HEAD, new ReportHeaderDTO());
+        model.addAttribute(SEARCH_STUDENT_ACCION, ACCION_REPORT_HISTORY_BY_STUDENT_ID);
         switch (REPORTS_OPTION.convertOption(option)) {
             case ADMINISTRATIVE_REPORT:
                 model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(DateUtils.addDay(DEFAULT_DAYS_FOR_SEARCH)));
                 model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(new Date()));
                 model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
+                model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
                 break;
             case PAYMENT_HISTORY_BY_STUDENT:
                 model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(DateUtils.addDay(DEFAULT_DAYS_FOR_SEARCH)));
@@ -105,61 +107,49 @@ public class ReportsController extends ParentControllerService {
     @Secured({"ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"})        
     String generateReport(Model model, @ModelAttribute ReportForm reportForm, HttpSession httpSession) {
         Short option = (Short) httpSession.getAttribute(REPORT_OPTION);
-        Map<?, ?> map = null;
+        
         model.addAttribute(FORM_ACCION, ACCION_GENERATE_REPORT);
         model.addAttribute(REPORT_FORM_OBJ, reportForm);
         model.addAttribute(VIEW_OPTION, option);
         model.addAttribute(REPORT_HEAD, new ReportHeaderDTO());
+        return getOption(model, reportForm, option);
+    }
+    /**
+     * Method that obtains the history of the last 3 years of the student
+     * 
+     * @param model
+     * @param reportForm
+     * @param httpSession
+     * @return String
+     */                        
+    @RequestMapping(value = "/getHistoryByStudentID", method = RequestMethod.GET)
+    @Secured({"ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"})        
+    String getHistoryByStudentID(Model model,  @RequestParam("idStudent") Integer idStudent, HttpSession httpSession) {
+    	Short option = REPORTS_OPTION.PAYMENT_HISTORY_BY_STUDENT.getOption();
+    	ReportForm reportForm = reportsService.getReportForm(idStudent);
+        httpSession.setAttribute(REPORT_OPTION, option);
+        model.addAttribute(VIEW_OPTION, option);
+        model.addAttribute(FORM_ACCION, ACCION_GENERATE_REPORT);
+        model.addAttribute(REPORT_FORM_OBJ, new ReportForm());
+        model.addAttribute(REPORT_HEAD, new ReportHeaderDTO());
+        model.addAttribute(ID_STUDENT, Long.valueOf(idStudent));
+    	return getOption(model, reportForm, option,Long.valueOf(idStudent));
+    }
+    private String getOption(Model model,ReportForm reportForm, Short option) {
+    	return getOption(model,reportForm,option,0L);
+    }
+    private String getOption(Model model,ReportForm reportForm, Short option,Long idStudent) {
+    	Map<?, ?> map = null;
         switch (REPORTS_OPTION.convertOption(option)) {
-            case ADMINISTRATIVE_REPORT:
-                model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
-                try {
-                    model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                    model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
-                    model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                    model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
-                    map = reportsService.administrativeReport(reportForm);
-                    if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
-                        model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
-                    } else {
-                        model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
-                        model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
-                        model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
-                    }
-                } catch (ParseException ex) {
-                    logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
-                    return ERROR_ACTION;
-                }
-                break;
-            case PAYMENT_HISTORY_BY_STUDENT:
-                try {
-                    model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                    model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
-                    model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
-                    model.addAttribute(ACTIVATE_PAYMENT_HISTORY_STUDENT, Boolean.TRUE);
-                    model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
-                    model.addAttribute(PRODUCTS, productsService.getActiveProducts());
-                    model.addAttribute(DESCPTION_STUDENTS, studentService.getDescriptionStudentDTO());
-                    map = reportsService.paymentHistoryByStudent(reportForm);
-                    if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
-                        model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
-                    } else {
-                        model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
-                        model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
-                        model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
-                        model.addAttribute(SHOW_IMAGE, studentService.existPhoto(new Long(reportForm.getIdStudent())));
-                        model.addAttribute(PROFILE_STUDENT, map.get(PROFILE_STUDENT));
-                    }
-                } catch (ParseException ex) {
-                    logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
-                    return ERROR_ACTION;
-                }
-                break;
-            case RECEIPTS_REPORT:
-                model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.FALSE);
-                model.addAttribute(ACTIVATE_TYPE_PAYMEN_RECEIPTS, Boolean.TRUE);
+        case ADMINISTRATIVE_REPORT:
+            model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
+            try {
+                model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
+                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
+                model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
+                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
                 model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
-                map = reportsService.receiptsReport(reportForm);
+                map = reportsService.administrativeReport(reportForm);
                 if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
                     model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
                 } else {
@@ -167,47 +157,89 @@ public class ReportsController extends ParentControllerService {
                     model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
                     model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
                 }
-                
-                break;
-            case REPORT_FOR_DOWNLOAD:
+            } catch (ParseException ex) {
+                logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
+                return ERROR_ACTION;
+            }
+            break;
+        case PAYMENT_HISTORY_BY_STUDENT:
+            try {
+                model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
+                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
                 model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
+                model.addAttribute(ACTIVATE_PAYMENT_HISTORY_STUDENT, Boolean.TRUE);
                 model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
                 model.addAttribute(PRODUCTS, productsService.getActiveProducts());
+                model.addAttribute(DESCPTION_STUDENTS, studentService.getDescriptionStudentDTO(idStudent));
+                map = reportsService.paymentHistoryByStudent(reportForm);
+                if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
+                    model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
+                } else {
+                    model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
+                    model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
+                    model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
+                    model.addAttribute(SHOW_IMAGE, studentService.existPhoto(new Long(reportForm.getIdStudent())));
+                    model.addAttribute(PROFILE_STUDENT, map.get(PROFILE_STUDENT));
+                }
+            } catch (ParseException ex) {
+                logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
+                return ERROR_ACTION;
+            }
+            break;
+        case RECEIPTS_REPORT:
+            model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.FALSE);
+            model.addAttribute(ACTIVATE_TYPE_PAYMEN_RECEIPTS, Boolean.TRUE);
+            model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
+            map = reportsService.receiptsReport(reportForm);
+            if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
+                model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
+            } else {
+                model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
+                model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
+                model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
+            }
+            
+            break;
+        case REPORT_FOR_DOWNLOAD:
+            model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
+            model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
+            model.addAttribute(PRODUCTS, productsService.getActiveProducts());
 
-                try {
-                    model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                    model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
-                    map = reportsService.reportForDownload(reportForm);
-                    if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
-                        model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
-                    } else {
-                        model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
-                        model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
-                        model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
-                    }
-                } catch (ParseException ex) {
-                    logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
-                    return ERROR_ACTION;
+            try {
+                model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
+                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
+                map = reportsService.reportForDownload(reportForm);
+                if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
+                    model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
+                } else {
+                    model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
+                    model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
+                    model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
                 }
-                break;
-            case STATE_STUDENT_ACCOUNT:
-                try {
-                    map = reportsService.stateStudentAccount(reportForm);
-                    if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
-                        model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
-                    } else {
-                        model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
-                        model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
-                        model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
-                    }
-                } catch (GenericBZKException e) {
-                    logger.error("Error generar el informe, e: " + e.getMessage());
-                    return ERROR_ACTION;
+            } catch (ParseException ex) {
+                logger.error("Error al parsear las fechas, ex: " + ex.getMessage());
+                return ERROR_ACTION;
+            }
+            break;
+        case STATE_STUDENT_ACCOUNT:
+            try {
+                map = reportsService.stateStudentAccount(reportForm);
+                model.addAttribute(SEARCH_STUDENT_ACCION, ACCION_REPORT_HISTORY_BY_STUDENT_ID);
+                if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
+                    model.addAttribute(GENERAL_MODAL_MESSAGE, map.get(GENERAL_MODAL_MESSAGE));
+                } else {
+                    model.addAttribute(REPORT_DETAIL_LIST, map.get(REPORT_DETAIL_LIST));
+                    model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
+                    model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
                 }
-                break;
-		default:
-			break;
-        }
+            } catch (GenericBZKException e) {
+                logger.error("Error generar el informe, e: " + e.getMessage());
+                return ERROR_ACTION;
+            }
+            break;
+	default:
+		break;
+    }
         return REPORTS_VIEW;
     }
 }

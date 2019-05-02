@@ -227,7 +227,7 @@ public class AccountService extends ParentControllerService implements UserDetai
                 append(numbers).append(symbols).toString();
  
         // Using random method
-        Random rndm_method = new Random();
+        Random rndmMethod = new Random();
  
         char[] password = new char[len];
  
@@ -236,7 +236,7 @@ public class AccountService extends ParentControllerService implements UserDetai
             // Use of charAt() method : to get character value
             // Use of nextInt() as it is scanning the value as int
             password[i] =
-              values.charAt(rndm_method.nextInt(values.length()));
+              values.charAt(rndmMethod.nextInt(values.length()));
  
         }
         return new String(password);
@@ -254,7 +254,7 @@ public class AccountService extends ParentControllerService implements UserDetai
                     break;
                 case CODE_EDIT:
                     codEdit = cod;
-                    break;
+                    break;            
             }
         }
          for(AccountDTO dto:accountForm.getListAccountDto()){
@@ -276,4 +276,24 @@ public class AccountService extends ParentControllerService implements UserDetai
       String message= messageSource.getMessage(ACCOUNT_OK_UPDATE, null, Locale.getDefault()).replace("%s", count.toString());
       mod.addAttribute(GENERAL_MODAL_MESSAGE, message);   
     }   
+    /**
+     * Find the current user by mail
+     * @param user
+     * @return Account
+     * @throws GenericBZKException 
+     */
+    public  PersonalInfoForm  getCurrentUser(String  user) throws GenericBZKException {
+     Account account =  accountRepository.findOneByEmail(user);
+     PersonalInfoForm form = new PersonalInfoForm();
+     if(account !=null) {
+    	 form.setEmail(account.getEmail());
+    	 form.setFirstName(account.getFirtName());
+    	 form.setSurname(account.getLastName());
+    	 form.setPassword("********");
+     }else {
+    	 logger.error("The user was not found, serious error");
+         throw new GenericBZKException("The user was not found, serious error");
+     }
+     return form;
+    }
 }

@@ -14,6 +14,8 @@ import com.dojogrouppty.config.SystemParametersRepository;
 import com.dojogrouppty.error.GenericBZKException;
 import com.dojogrouppty.products.Products;
 import com.dojogrouppty.products.ProductsRepository;
+import com.dojogrouppty.students.Student;
+import com.dojogrouppty.students.StudentService;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -54,6 +56,8 @@ public class ReportsService extends ParentControllerService{
    private SystemParametersRepository systemParametersRepository;
     @Autowired
     private ProductsRepository productsRepository;
+    @Autowired
+    private StudentService studentService;
     private static final Logger logger
             = LoggerFactory.getLogger(ReportsService.class);
     
@@ -172,7 +176,7 @@ public class ReportsService extends ParentControllerService{
               logger.debug("3");
             }
             else{                
-               List<ReportDetailDTO> list =  buildAdministrativeReport(iniDate,finalDate);
+               List<ReportDetailDTO> list =  buildAdministrativeReport(iniDate,finalDate,reportForm.getTypePayment());
                 if (list == null || list.isEmpty()) {
                     String message = messageSource.getMessage(EMPTY_LIST, null, Locale.getDefault());
                     map.put(GENERAL_MODAL_MESSAGE, message);
@@ -180,7 +184,7 @@ public class ReportsService extends ParentControllerService{
                 }
                 else{
                     map.put(REPORT_DETAIL_LIST, list);
-                    map.put(REPORT_FOOD, getFoodadministrativeReport(iniDate, finalDate));
+                    map.put(REPORT_FOOD, getFoodadministrativeReport(iniDate, finalDate,reportForm.getTypePayment()));
                     ReportHeaderDTO header = new ReportHeaderDTO();              
                     header.setTitle(messageSource.getMessage(TITLE_ADMINISTRATIVE_REPORT, null, Locale.getDefault()).replaceFirst("%s", reportForm.getInitialDate().substring(0,10)).replaceFirst("%s", reportForm.getFinalDate().substring(0,10)));
                     header.setNamefile(messageSource.getMessage(NAME_REPORT_ADMINISTRATIVE_REPORT, null, Locale.getDefault()));
@@ -316,6 +320,7 @@ public class ReportsService extends ParentControllerService{
         query.setParameter("parm2", finalDate);
         query.setParameter("parm3",typeProduct);
         query.setParameter("parm4",idStudent);        
+        logger.debug("iniDate:["+iniDate.toString()+"] finalDate:["+finalDate.toString()+"] typeProduct:["+typeProduct+"] idStudent:["+idStudent+"]");
         List<Object[]> listObj = query.getResultList();
              for (Object[] objsT : listObj) {
                 logger.debug("2");
@@ -337,13 +342,15 @@ public class ReportsService extends ParentControllerService{
         * @param finalDate
         * @return 
         */
-     private List<ReportDetailDTO> buildAdministrativeReport(Date iniDate, Date finalDate) {
+     private List<ReportDetailDTO> buildAdministrativeReport(Date iniDate, Date finalDate,String typePayment) {
         logger.debug("buildAdministrativeReport..");
         List<ReportDetailDTO> listDto = new ArrayList<ReportDetailDTO>();
         Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_ADMINISTRATIVE_REPORT);
         query.setParameter("parm1", iniDate);
         query.setParameter("parm2", finalDate);
+        query.setParameter("parm3", Long.parseLong(typePayment));
         List<Object[]> listObj = query.getResultList();
+        Long 	secNum=9000000L;
         logger.debug("1");
         String signal = "";
         BigDecimal totalxDay = new BigDecimal("0");
@@ -362,6 +369,7 @@ public class ReportsService extends ParentControllerService{
                 dto.setProduct(objsT[3].toString());
                 dto.setPaymentMethod(objsT[4].toString());
                 dto.setAmount(objsT[5].toString());
+                dto.setComment(objsT[8].toString());
                 if (!dto.getDate().equals(signal)) {
                     logger.debug("3");
                     ReportDetailDTO totalxDayDto = new ReportDetailDTO();
@@ -369,10 +377,11 @@ public class ReportsService extends ParentControllerService{
                     totalxDayDto.setTotalPerDay(currencyFormatter.format(totalxDay));                    
                     totalxDayDto.setDateSubTotal(messageSource.getMessage(TOTAL_PER_DAY, null, Locale.getDefault()).replaceFirst("%s",signal));
                     totalxDayDto.setDate(signal);
+                    totalxDayDto.setNumber(secNum.toString());
                     listDto.add(totalxDayDto);
                     totalxDay = BigDecimal.ZERO;
                     signal = dto.getDate();
-
+                    secNum+=1001;	
                 }
                 logger.debug("Amount:[" + objsT[5].toString() + "]");
                 totalxDay = totalxDay.add(new BigDecimal(objsT[6].toString()));
@@ -429,6 +438,7 @@ public class ReportsService extends ParentControllerService{
         for (Object[] objs : listObj) {
         ReportStateStudentAccountDTO dto = new ReportStateStudentAccountDTO();    
         dto.setName(objs[0].toString());       
+        dto.setStudentID(Integer.parseInt(objs[1].toString()));
         dto.setLastMonthlyPayment(objs[2].toString());
         dto.setPreviousAnnuityDate(objs[3].toString());
         dto.setActive(objs[4].toString());
@@ -471,11 +481,12 @@ public class ReportsService extends ParentControllerService{
     * Get food administrative report
     * @return 
     */
-   private FootDTO getFoodadministrativeReport(Date iniDate,Date finalDate){
+   private FootDTO getFoodadministrativeReport(Date iniDate,Date finalDate,String typePayment){
        FootDTO food= new FootDTO();
        Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_ADMINISTRATIVE_REPORT_FOOD);
        query.setParameter("parm1",iniDate);
-       query.setParameter("parm2",finalDate);       
+       query.setParameter("parm2",finalDate);  
+       query.setParameter("parm3",Long.parseLong(typePayment));
        Object obj = query.getSingleResult();
        String total="$".concat(obj.toString());
        food.setTotal(total);
@@ -565,5 +576,20 @@ public class ReportsService extends ParentControllerService{
            listDto.add(dto);
        }
      return gson.toJson(listDto);    
+   }
+   /**
+    * Method that loads the payment history form
+    * @param idStudent
+    * @return ReportForm with the student
+    */
+   public ReportForm getReportForm(Integer idStudent) {
+	  SystemParameters parameter = systemParametersRepository.getParameter(PARAMETER_NUMBER_OF_DAYS_SEARCH_HISTORY) ;  
+   	Student s = studentService.getStudent(idStudent.longValue());
+   	ReportForm reportForm = new ReportForm(); 	
+   	reportForm.setFinalDate(DateUtils.toString(new Date(), DDMMYYYY_HHMMSS_24h));
+   	reportForm.setInitialDate(DateUtils.toString(DateUtils.addDay(Integer.parseInt(parameter.getValue())), DDMMYYYY_HHMMSS_24h));
+   	reportForm.setIdStudent(s.getIdStudent().intValue());  	
+   	reportForm.setTypeProduct("0");
+   	return reportForm;
    }
 }

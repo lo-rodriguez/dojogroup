@@ -69,4 +69,9 @@ public class DateUtils {
             cal.set(year, Calendar.DECEMBER, 1);
           return cal.getTime();
         }
+        public static String toString(Date date1, String format)
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return sdf.format(date1);
+        } 
 }

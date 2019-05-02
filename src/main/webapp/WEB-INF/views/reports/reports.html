@@ -139,6 +139,14 @@
                                                         </span>
                                                     </div>                                                     
                                                 </div> 
+                                                  <div class="col-md-4">
+                                                    <label th:text="#{dashboard.payment.form.typesOfpayments}">Seleccione el tipo de pago</label>
+                                                    <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
+                                                    <select class="form-control"  id="typePayment" name="typePayment" required th:field="*{typePayment}"  th:attr="disabled=${disabled}" >
+                                                        <option value="0"> -- </option>
+                                                        <option th:each="typePayment : ${typesPayments}"   th:value="${typePayment.id}" th:utext="${typePayment.description}" th:field="*{typePayment}"/>
+                                                    </select>
+                                                </div>
                                                 <script th:inline="javascript"  type="text/javascript">
                                                             $(function () {
                                                             $('#datePayIni').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${initialDate}]]*/));
@@ -183,7 +191,11 @@
                                                     <label th:text="#{dashboard.student}">Seleccione el estudiante</label>
                                                     <b><lebel class="text-danger" th:text="#{dashboard.general.requiredField}">  Campo requerido.</lebel></b>
                                                     <select class="form-control selectpicker"  id="idStudent" required th:field="*{idStudent}"  th:attr="disabled=${disabled}"  data-live-search="true" name="idStudent">                                                                                                                             
-                                                        <option th:each="idStudent : ${descriptionStudents}"   th:value="${idStudent.id}" th:utext="${idStudent.description}" th:field="*{idStudent}"/>
+                                                        <option th:each="student : ${descriptionStudents}"   
+                                                        		th:value="${student.id}" 
+                                                        		th:text="${student.description}"
+                                                          		th:selected="${student.id == idStudent}">
+                                                        </option>  		
                                                     </select>                                             
                                                 </div>
                                             </th:block>      
@@ -274,7 +286,32 @@
 				console.log('numCols: ' + numCols);
                 $(document).ready(function () {
                 if (rowCount > 1){
-                $('#dataTables-report').DataTable({
+                $('#dataTables-report').DataTable({                	
+                	 columnDefs: [ {
+                         targets: [ 0 ],
+                         orderData: [ 0, 2,4],
+                         orderable: true                    
+                     }, {
+                         targets: [ 1 ],
+                         orderable: false
+                     }, {
+                         targets: [ 2 ],
+                         orderData: [ 0, 2,5 ],
+                     	 orderable: true,
+                     },
+                     {
+                         targets: [ 3 ],
+                         orderable: false
+                     },
+                     {
+                         targets: [ 4 ],
+                         orderable: false
+                     }  ,
+                     {
+                         targets: [ 5 ],
+                         orderable: false
+                     }    ],
+                     "aaSorting": [ [0,'desc'], [2,'asc'] ],     
                 responsive: true,              
                         "language": {
                         "decimal": "",
@@ -306,8 +343,8 @@
                         return $.trim($(this).text());
                         });
                                 if ($tds.length > 0) {
-                        if (data[5].startsWith("$", 0)){
-                        $('td', row).eq(5).addClass('highlight');
+                        if (data[6].startsWith("$", 0)){
+                        $('td', row).eq(6).addClass('highlight');
                                 $("tr:last").css({ backgroundColor: "#e6f9ff", fontWeight: "bolder" });
                         }
                         }
@@ -316,12 +353,15 @@
                         buttons: [
                         { extend: 'excelHtml5',   exportOptions: {
                             format: {
-                                body: function ( data, row, column, node ) {  
-                                	var indexOfFirst = data.indexOf('</span>');                                                        	                                                	                              
-                                    if(numCols==7 && (column >0 && column <3)){
-                                     return processDate(data);
+                                body: function ( data, row, column, node ) {   
+                                	 if(numCols==7 && column == 0 ){
+                                  	   data =  processNameStudent(data);
+                                      }                                                                                                      
+                                	var indexOfFirst = data.indexOf('</span>');                                 	                                                                                      	                                                	                          
+                                	 if(numCols==7 && (column >0 && column <3)){                                 	                                    
+                                     	return processDate(data);
                                      }                                    
-                                    else if(numCols<7 && column ==0 && indexOfFirst>0){
+                                    else if(numCols<7 && column ==0 && indexOfFirst>0){                                    
                                      return processDate(data);
                                     }
                                     else 
@@ -331,10 +371,13 @@
                         }, footer: true, title: /*[[${reportHeaderDTO.title}]]*/, filename:/*[[${reportHeaderDTO.namefile}]]*/ },
                         { extend: 'csvHtml5',  exportOptions: {
                             format: {
-                                body: function ( data, row, column, node ) {  
-                                	var indexOfFirst = data.indexOf('</span>');                                                        	                                                	                              
-                                    if(numCols==7 && (column >0 && column <3)){
-                                     return processDate(data);
+                                body: function ( data, row, column, node ) { 
+                                	 if(numCols==7 && column == 0 ){
+                                    	data =  processNameStudent(data);
+                                     }  
+                                	var indexOfFirst = data.indexOf('</span>');                                  	                                                    	                                                	                             
+                                	 if(numCols==7 && (column >0 && column <3)){                                     
+                                     	return processDate(data);
                                      }                                    
                                     else if(numCols<7 && column ==0 && indexOfFirst>0){
                                      return processDate(data);
@@ -362,7 +405,12 @@
                 		nData = moment(data, 'DD/MM/YYYY');
                     }
                 	return nData.local().format('DD/MM/YYYY');
-                    }                                   
+                    }
+                function processNameStudent(data){
+                	data=data.replace(/<[^>]*>/,''); 
+                	data=data.replace('</a>','');   
+                	return data;
+                 }                                   
             </script>
         </body>   
     </html>

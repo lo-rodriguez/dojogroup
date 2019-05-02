@@ -228,6 +228,7 @@
                     <th th:text="#{dashboard.report.administrativeReport.number}"></th>
                     <th th:text="#{dashboard.report.administrativeReport.product}"></th>
                     <th th:text="#{dashboard.report.administrativeReport.paymentMethod}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.comment}"></th>
                     <th th:text="#{dashboard.report.administrativeReport.amount}"></th>
                 </tr>
             </thead>
@@ -239,11 +240,13 @@
                     <td th:text="${dto.number}" class="center"></td>
                     <td th:text="${dto.product}"class="center"></td>
                     <td th:text="${dto.paymentMethod}"class="center"></td>
+                    <td th:text="${dto.comment}"class="left"></td>
                     <td th:text="${dto.amount}"class="right"></td>
                  </th:block>                    
                  <th:block th:if="${dto.totalPerDay !=''}" >
                     <td th:text="${dto.date}" ></td>
                     <td ></td>
+                    <td th:text="${dto.number}"  class='hide' ></td>
                     <td ></td>
                     <td ></td>
                     <td th:text="${dto.dateSubTotal}" class="center"></td>
@@ -352,8 +355,10 @@
             </thead>
             <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
                 <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >                                                                       
-                    <td th:text="${dto.name}" class="center"></td>                            
-                    <td><span th:text="${dto.intLastMonthlyPayment}" class='hide'></span><span th:text="${dto.lastMonthlyPayment}" ></span></td>
+				<td class="center"><a href="#" th:text="${dto.name}"
+					th:href="@{${searchStudentAction}(idStudent=${dto.studentID})}"
+					class="btn btn-link"></a></td>
+				<td><span th:text="${dto.intLastMonthlyPayment}" class='hide'></span><span th:text="${dto.lastMonthlyPayment}" ></span></td>
                     <td><span th:text="${dto.intPreviousAnnuityDate}" class='hide'></span><span th:text="${dto.previousAnnuityDate}"></span></td>  
                     <td th:text="${dto.active}"class="center"></td>
                     <td th:text="${dto.enrollmentInTheCurrentMonth}"class="center"></td>

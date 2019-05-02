@@ -180,7 +180,7 @@ public class StudentController extends ParentControllerService {
     @Secured({"ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"})        
     String edittudent(Model model, @RequestParam("idStudent") long id) throws IOException {
         try {
-            logger.debug("Into  edittudent with id=" + id);
+            logger.debug("Into  edittudent with id=%d", id);
             StudentForm form = studentService.loadFormStudent(id);
             model.addAttribute(REGISTRATION_DATE_ATRIBUTE,messageSource.getMessage(REGISTRATION_DATE, null, Locale.getDefault()).replace("%s", form.getDayOfIncome()));
             model.addAttribute(FORM_ACCION, ACCION_EDIT_STUDENT);
@@ -232,7 +232,7 @@ public class StudentController extends ParentControllerService {
                 Student st = studentService.saveStudent(studentForm);
                 editStudentMessage = messageSource.getMessage(FINAL_MESSAGE_EDIT_STUDENT, null, Locale.getDefault());
                 editStudentMessage = editStudentMessage.replace("{firstName}", st.getFirstName()).replace("{id}", st.getIdStudent().toString());
-                logger.debug("editStudentMessage:" + editStudentMessage);
+                logger.debug("editStudentMessage:%s",editStudentMessage);
                 if (studentForm.getData() != null && studentService.savePhoto(studentForm.getData(), st.getIdStudent())) {
                     model.addAttribute(SHOW_IMAGE, Boolean.TRUE);
                 }
