@@ -1,4 +1,4 @@
-CREATE USER 'ubzk'@'%' IDENTIFIED BY 'ubzk2018';
+CREATE USER '****'@'%' IDENTIFIED BY '****';
 grant all privileges on *.*  to 'ubzk'@'%' with grant option;
 SHOW DATABASES;
 status;
