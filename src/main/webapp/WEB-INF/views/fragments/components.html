@@ -235,7 +235,7 @@
             <tbody th:if="${not #lists.isEmpty(reportDetailListtDto)}">
                 <tr class="odd gradeX" th:each="dto: ${reportDetailListtDto}" >  
                  <th:block th:if="${dto.totalPerDay =='' }" >                    
-                    <td th:text="${dto.date}" ></td>  
+                   <td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>   
                     <td th:text="${dto.name}" class="center"></td>
                     <td th:text="${dto.number}" class="center"></td>
                     <td th:text="${dto.product}"class="center"></td>
@@ -244,19 +244,19 @@
                     <td th:text="${dto.amount}"class="right"></td>
                  </th:block>                    
                  <th:block th:if="${dto.totalPerDay !=''}" >
-                    <td th:text="${dto.date}" ></td>
+                    <td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>  
                     <td ></td>
-                    <td th:text="${dto.number}"  class='hide' ></td>
+                    <td  th:text="${dto.number}" class="hide2">NODATA</td>
                     <td ></td>
-                    <td ></td>
-                    <td th:text="${dto.dateSubTotal}" class="center"></td>
+                    <td ></td>                   
+                    <td th:text="${dto.dateSubTotal}" class="left"></td>
                     <td th:text="${dto.totalPerDay}"class="right"></td>
                  </th:block>                  
                 </tr>
             </tbody>
             <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
                 <tr>
-                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th colspan="6" style="text-align:right" th:text="#{report.food.total}"></th>
                     <th th:text="${reportFood.total}" align="right"></th>
                 </tr>
             </tfoot> 
@@ -268,6 +268,7 @@
                     <th th:text="#{dashboard.report.paymentHistoryBystudent.name}"></th>
                     <th th:text="#{dashboard.report.paymentHistoryBystudent.number}"></th>
                     <th th:text="#{dashboard.report.paymentHistoryBystudent.product}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.comment}"></th>
                     <th th:text="#{dashboard.report.paymentHistoryBystudent.paymentMethod}"></th>
                     <th th:text="#{dashboard.report.paymentHistoryBystudent.amount}"></th>
                 </tr>
@@ -278,13 +279,14 @@
                     <td th:text="${dto.name}" class="center"></td>
                     <td th:text="${dto.number}" class="center"></td>
                     <td th:text="${dto.product}"class="center"></td>
+                    <td th:text="${dto.comment}"class="left"></td>
                     <td th:text="${dto.paymentMethod}"class="center"></td>
                     <td th:text="${dto.amount}"align="right"></td>                                                                                                                   
                 </tr>
             </tbody>
                <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
                 <tr>
-                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                    <th colspan="6" style="text-align:right" th:text="#{report.food.total}"></th>
                     <th th:text="${reportFood.total}" align="right"></th>
                 </tr>
             </tfoot> 
@@ -320,6 +322,7 @@
                     <th th:text="#{dashboard.report.reportForDownload.name}"></th>
                     <th th:text="#{dashboard.report.reportForDownload.number}"></th>
                     <th th:text="#{dashboard.report.reportForDownload.product}"></th>
+                    <th th:text="#{dashboard.report.administrativeReport.comment}"></th>
                     <th th:text="#{dashboard.report.reportForDownload.paymentMethod}"></th>
                     <th th:text="#{dashboard.report.reportForDownload.amount}"></th>
                 </tr>
@@ -329,14 +332,15 @@
                     <td class="center"><span  th:text="${dto.intDate}" class='hide'></span><span  th:text="${dto.date}"></span></td>
                     <td th:text="${dto.name}" class="center"></td>
                     <td th:text="${dto.number}" class="center"></td>
-                    <td th:text="${dto.product}"class="center"></td>
+                    <td th:text="${dto.product}"class="center"></td>                                   
+                    <td th:text="${dto.comment}"class="left"></td>                    
                     <td th:text="${dto.paymentMethod}"class="center"></td>
                     <td th:text="${dto.amount}"align="right"></td>                                                                                                                   
                 </tr>
             </tbody>
             <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
                 <tr>
-                    <th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.food.total}"></th>
+                     <th colspan="6" style="text-align:right" th:text="#{report.food.total}"></th>
                     <th th:text="${reportFood.total}" align="right"></th>
                 </tr>
             </tfoot> 
@@ -367,9 +371,10 @@
                 </tr>
             </tbody>
               <tfoot th:if="${not #lists.isEmpty(reportDetailListtDto)}">
-                <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th style="text-align:right" th:text="#{report.stateStudentAccount.totalOfActiveStudents}"></th>
-                    <th th:text="${reportFood.active}" align="right"></th>
+                <tr th:switch= "${stateStudentAccount}">                
+                    <th></th><th></th><th></th><th></th><th></th><th style="text-align:right" th:case="0"  th:text="#{report.stateStudentAccount.totalOfActiveStudents}"></th>  
+                    <th style="text-align:right" th:case="2"  th:text="#{report.stateStudentAccount.totalOfNotActiveStudents}"></th>                   
+                    <th th:text="${reportFood.active}" align="right"></th>                      
                 </tr>
             </tfoot> 
         </table>

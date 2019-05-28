@@ -8,12 +8,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-    <th:block th:if="${editModeStudent == false}">    
-        <title th:text="#{dashboard.student.addstudent.title}"></title>
-    </th:block>   
-    <th:block th:if="${editModeStudent == true}">    
-        <title th:text="#{dashboard.student.editstudent.title}"></title>
-    </th:block>   
+    <th:block th:if="${module != 'reports'}" >    
+    	<th:block th:if="${editModeStudent == false}">    
+        	<title th:text="#{dashboard.student.addstudent.title}"></title>
+    	</th:block>   
+    	<th:block th:if="${editModeStudent == true}">    
+        	<title th:text="#{dashboard.student.editstudent.title}"></title>
+    	</th:block>  
+    </th:block>  
+    <th:block th:if="${module == 'reports'}" > 
+    	<title th:text="#{dashboard.student.report.title}"></title>
+    </th:block>  
     <!-- Bootstrap Core CSS -->
     <link href=""   th:href="@{/resources/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
 
@@ -73,7 +78,7 @@
 
         <div id="page-wrapper">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-12" th:if="${module != 'reports'}">
                     <th:block th:if="${editModeStudent == false}">    
                         <h3 class="page-header" th:text="#{dashboard.student.addstudent.form.inscription}">Formulario de inscripción del alumno</h3>
                     </th:block>   
@@ -81,17 +86,25 @@
                         <h3 class="page-header" th:text="#{dashboard.student.addstudent.form.edit}">Formulario de inscripción del alumno</h3>
                     </th:block>      
                 </div>
+                 <div class="col-lg-12" th:if="${module == 'reports'}">
+                        <h3 class="page-header" th:text="#{dashboard.student.report.form.title}">Consulta de datoa</h3>                        
+                </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
+                        <div class="panel-heading" th:if="${module != 'reports'}">
                             <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend}"></small></p>                                
                             <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend2}"></small></p>
                             <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend3}"></small></p>
                             <p class="text-info" ><small th:text="#{dashboard.student.addstudent.form.legend4}"></small></p>
+                        </div>
+                         <div class="panel-heading" th:if="${module == 'reports'}">
+                            <p class="text-info" ><small th:text="#{dashboard.student.report.form.legend}"></small></p>                                
+                            <p class="text-info" ><small th:text="#{dashboard.student.report.form.legend2}"></small></p>   
+                            <p class="text-info" ><small th:text="#{dashboard.student.report.form.legend3}"></small></p>                       
                         </div>
                         <div class="panel-body">
                             <div class="row" id="main">
@@ -269,7 +282,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-1">
                                                         <label for="email" th:text="#{dashboard.student.addstudent.form.email2}">Email2 <span class="text-muted">(Optional)</span></label>
-                                                        <input type="email" class="form-control" id="emailOfTheGuardian" placeholder="you@example.com" th:field="*{emailOfTheGuardian}" />                                                  
+                                                        <input type="email" class="form-control" id="emailOfTheGuardian" placeholder="you@example.com" th:field="*{emailOfTheGuardian}" th:attr="disabled=${disabled}" />                                                  
                                                     </div>
                                                     <div class="col-md-4 mb-1" >
                                                         <label for="phone1" th:text="#{dashboard.student.addstudent.form.telephonOfTheGuardian}">phone<span class="text-muted">(Optional)</span></label>
@@ -302,10 +315,13 @@
                                                 </script>
                                                 <div th:replace="fragments/components :: modal(id='modalMessage', title='Edición de estudiante')"></div>                                                
                                             </th:block>
-                                            <div class="col-md-12 mb-1" id="myButtons">
+                                            <div class="col-md-12 mb-1" id="myButtons" th:if="${module != 'reports'}">
                                                 <button type="submit" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.save}">Subir los cambios</button>
                                                 <button type="reset" id="cleanForm" class="btn btn-outline btn-primary" th:attr="disabled=${disabled}" th:text="#{dashboard.student.addstudent.StudentForm.clear}">Limpiar los datos</button>
-                                            </div>    
+                                            </div> 
+                                             <div class="col-md-12 mb-1" id="myButtons" th:if="${module == 'reports'}">
+                                                <a href="#"  class="btn btn-primary" th:href="@{/dashboard}"  th:text="#{button.exit.legend}">Salir</a>                                                
+                                            </div>       
                                               <th:block th:if="${editModeStudent == false}">   
                                                 <script th:inline="javascript" type="text/javascript">  
                                                  $('#dayOfIncome').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${birthdate}]]*/));

@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -28,7 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author lrodriguezn
  */
 public class OtherTest {
-
+	public static final String FORMAT_DATE = "dd/MM/yyyy";
+	public static final SimpleDateFormat dateformat = new SimpleDateFormat(FORMAT_DATE);
     @Test
     public void simpleSplitDate() {
 
@@ -49,7 +52,7 @@ public class OtherTest {
     }
 
     @Test
-    public void testFormatDate() {
+    public void testFormatDate() throws ParseException {
         // Make a new Date object. It will be initialized to the current time.
         Date now = new Date();
 
@@ -81,6 +84,7 @@ public class OtherTest {
                 DateFormat.MEDIUM, DateFormat.SHORT).format(now));
         System.out.println("10. " + DateFormat.getDateTimeInstance(
                 DateFormat.LONG, DateFormat.LONG).format(now));
+        System.out.println("FormatDate:"+DateFormat.getInstance().format(dateformat.parse("01/02/2019")));
     }
     @Test
     public void showSystempProperties(){

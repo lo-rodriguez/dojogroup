@@ -9,6 +9,7 @@ import com.dojogrouppty.catalogs.CatalogsService;
 import com.dojogrouppty.common.DateUtils;
 import com.dojogrouppty.common.ERROR_REPORTS;
 import com.dojogrouppty.common.ParentControllerService;
+import com.dojogrouppty.common.STATUS;
 import com.dojogrouppty.config.SystemParameters;
 import com.dojogrouppty.config.SystemParametersRepository;
 import com.dojogrouppty.error.GenericBZKException;
@@ -17,7 +18,6 @@ import com.dojogrouppty.products.ProductsRepository;
 import com.dojogrouppty.students.Student;
 import com.dojogrouppty.students.StudentService;
 
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -60,6 +60,7 @@ public class ReportsService extends ParentControllerService{
     private StudentService studentService;
     private static final Logger logger
             = LoggerFactory.getLogger(ReportsService.class);
+    private Integer countActive=0,countNotActive=0,countAll=0;
     
     public Map<String, Object> paymentHistoryByStudent(ReportForm reportForm)  throws ParseException{
         Map <String,Object> map =   new TreeMap<String, Object>();
@@ -130,7 +131,7 @@ public class ReportsService extends ParentControllerService{
      */
      public Map<String, Object> stateStudentAccount(ReportForm reportForm) throws GenericBZKException {
              Map <String,Object> map =   new TreeMap<String, Object>();
-            List<ReportStateStudentAccountDTO> list = buildStateStudentAccount();
+            List<ReportStateStudentAccountDTO> list = buildStateStudentAccount(new Short(reportForm.getActive()));
             if(list==null || list.isEmpty()){
             String message = messageSource.getMessage(EMPTY_LIST, null, Locale.getDefault()); 
             map.put(GENERAL_MODAL_MESSAGE,message);
@@ -139,8 +140,17 @@ public class ReportsService extends ParentControllerService{
             }
             else{
              map.put(REPORT_DETAIL_LIST,list);
+             Short op = new Short(reportForm.getActive());
              map.put(REPORT_FOOD,getStateStudentAccount());
              ReportHeaderDTO header = new ReportHeaderDTO();
+             if(STATUS.ACTIVE.getStatus().equals(op) || STATUS.ALL_STUDENTS.getStatus().equals(op)){
+            	   logger.debug("STATUS.ALL_STUDENTS.getString():"+STATUS.ALL_STUDENTS.getString());
+            	 map.put(STATES_STUDENTS_ACCOUNT,STATUS.ALL_STUDENTS.getString()); 
+             }
+             else {
+            	 logger.debug("STATUS.INACTIVE.getString():"+STATUS.INACTIVE.getString());
+            	 map.put(STATES_STUDENTS_ACCOUNT,STATUS.INACTIVE.getString()); 
+             }
              header.setNamefile(messageSource.getMessage(NAME_STUDENTS_REPORT, null, Locale.getDefault()));                        
              header.setTitle(messageSource.getMessage(TITLE_STUDENTS_REPORT, null, Locale.getDefault()).replaceFirst("%s",dateformat.format(new Date())));
              map.put(REPORT_HEAD,header);
@@ -308,6 +318,7 @@ public class ReportsService extends ParentControllerService{
            dto.setPaymentMethod(objs[4].toString());
            dto.setAmount(objs[5].toString());
            dto.setIntDate(Integer.parseInt(objs[6].toString()));
+           dto.setComment(objs[7].toString());
            listDto.add(dto);
        }
        return listDto;
@@ -332,6 +343,7 @@ public class ReportsService extends ParentControllerService{
                 dto.setPaymentMethod(objsT[4].toString());
                 dto.setAmount(objsT[5].toString());
                 dto.setIntDate(Integer.parseInt(objsT[6].toString()));
+                dto.setComment(objsT[7].toString());
                 listDto.add(dto);
              }
           return listDto;
@@ -341,8 +353,9 @@ public class ReportsService extends ParentControllerService{
         * @param iniDate
         * @param finalDate
         * @return 
+     * @throws ParseException 
         */
-     private List<ReportDetailDTO> buildAdministrativeReport(Date iniDate, Date finalDate,String typePayment) {
+     private List<ReportDetailDTO> buildAdministrativeReport(Date iniDate, Date finalDate,String typePayment) throws ParseException {
         logger.debug("buildAdministrativeReport..");
         List<ReportDetailDTO> listDto = new ArrayList<ReportDetailDTO>();
         Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_ADMINISTRATIVE_REPORT);
@@ -350,56 +363,32 @@ public class ReportsService extends ParentControllerService{
         query.setParameter("parm2", finalDate);
         query.setParameter("parm3", Long.parseLong(typePayment));
         List<Object[]> listObj = query.getResultList();
-        Long 	secNum=9000000L;
-        logger.debug("1");
-        String signal = "";
-        BigDecimal totalxDay = new BigDecimal("0");
-        if (listObj.size() > 0) {
-            Object[] firtObj = listObj.get(0);
-            signal = firtObj[0].toString();
+
+        int size=listObj.size(),intDate=0;
+        if (size > 0) {
             logger.debug("--------------------------------------------------");
             logger.debug("1");
             for (Object[] objsT : listObj) {
                 logger.debug("2");
                 ReportDetailDTO dto = new ReportDetailDTO();
+                intDate =Integer.parseInt(objsT[7].toString());
                 dto.setDate(objsT[0].toString());
-                dto.setIntDate(Integer.parseInt(objsT[7].toString()));
+                dto.setIntDate(intDate);
                 dto.setName(objsT[1].toString());
                 dto.setNumber(objsT[2].toString());
                 dto.setProduct(objsT[3].toString());
                 dto.setPaymentMethod(objsT[4].toString());
                 dto.setAmount(objsT[5].toString());
                 dto.setComment(objsT[8].toString());
-                if (!dto.getDate().equals(signal)) {
-                    logger.debug("3");
-                    ReportDetailDTO totalxDayDto = new ReportDetailDTO();
-                    logger.debug("Final totalxDay:[" + totalxDay.toString() + "] Date:[" + signal + "]");
-                    totalxDayDto.setTotalPerDay(currencyFormatter.format(totalxDay));                    
-                    totalxDayDto.setDateSubTotal(messageSource.getMessage(TOTAL_PER_DAY, null, Locale.getDefault()).replaceFirst("%s",signal));
-                    totalxDayDto.setDate(signal);
-                    totalxDayDto.setNumber(secNum.toString());
-                    listDto.add(totalxDayDto);
-                    totalxDay = BigDecimal.ZERO;
-                    signal = dto.getDate();
-                    secNum+=1001;	
-                }
                 logger.debug("Amount:[" + objsT[5].toString() + "]");
-                totalxDay = totalxDay.add(new BigDecimal(objsT[6].toString()));
                 listDto.add(dto);
             }
         }
-        if (totalxDay.floatValue() > 0F) {
-            logger.debug("4");
-            ReportDetailDTO totalxDayDto = new ReportDetailDTO();
-            totalxDayDto.setTotalPerDay(currencyFormatter.format(totalxDay));            
-            totalxDayDto.setDateSubTotal(messageSource.getMessage(TOTAL_PER_DAY, null, Locale.getDefault()).replaceFirst("%s",signal));
-            totalxDayDto.setDate(signal);
-            listDto.add(totalxDayDto);
-        }
+
         logger.debug("--------------------------------------------------");
         listDto.sort(Comparator.comparing(ReportDetailDTO::getDate).reversed());
         for (ReportDetailDTO dto : listDto) {
-            logger.debug("Date:[" + dto.getDate() + "] amount:[" + dto.getAmount() + "]");
+            logger.debug("Date:[" + dto.getDate() + "] intDate:[ "+dto.getIntDate()+"] Number:["+dto.getNumber()+"] amount:[" + dto.getAmount() + "]");
         }
         logger.debug("return listDto..");
         return listDto;
@@ -431,12 +420,15 @@ public class ReportsService extends ParentControllerService{
         }
         return listDto;
     }
-    private List<ReportStateStudentAccountDTO>buildStateStudentAccount(){
+    private List<ReportStateStudentAccountDTO>buildStateStudentAccount(Short status){
         List<ReportStateStudentAccountDTO> listDto= new ArrayList<ReportStateStudentAccountDTO>();
         Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_STATE_STUDENTS);
-        List<Object[]> listObj = query.getResultList();        
+        List<Object[]> listObj = query.getResultList(); 
+        countActive=0;countNotActive=0;countAll=0;
         for (Object[] objs : listObj) {
-        ReportStateStudentAccountDTO dto = new ReportStateStudentAccountDTO();    
+        ReportStateStudentAccountDTO dto = new ReportStateStudentAccountDTO();
+       
+        if(((objs[4].toString().equals(YES_ES)) && STATUS.ACTIVE.getStatus().equals(status))) {
         dto.setName(objs[0].toString());       
         dto.setStudentID(Integer.parseInt(objs[1].toString()));
         dto.setLastMonthlyPayment(objs[2].toString());
@@ -447,8 +439,43 @@ public class ReportsService extends ParentControllerService{
         dto.setEnrollment(objs[7].toString());   
         dto.setIntLastMonthlyPayment(Integer.parseInt(objs[9].toString()));
         dto.setIntPreviousAnnuityDate(Integer.parseInt(objs[10].toString()));
-        listDto.add(dto);    
+        listDto.add(dto);  
+        countActive++;
         }
+        else if(((objs[4].toString().equals(NO_ES)) && STATUS.INACTIVE.getStatus().equals(status))) {
+            dto.setName(objs[0].toString());       
+            dto.setStudentID(Integer.parseInt(objs[1].toString()));
+            dto.setLastMonthlyPayment(objs[2].toString());
+            dto.setPreviousAnnuityDate(objs[3].toString());
+            dto.setActive(objs[4].toString());
+            dto.setEnrollmentInTheCurrentMonth(objs[5].toString());
+            //FIXME Error in the field
+            dto.setContractMonth(objs[6].toString());
+            dto.setEnrollment(objs[7].toString());   
+            dto.setIntLastMonthlyPayment(Integer.parseInt(objs[9].toString()));
+            dto.setIntPreviousAnnuityDate(Integer.parseInt(objs[10].toString()));
+            listDto.add(dto); 
+            countNotActive++;
+        }
+        else if( STATUS.ALL_STUDENTS.getStatus().equals(status)){
+            dto.setName(objs[0].toString());       
+            dto.setStudentID(Integer.parseInt(objs[1].toString()));
+            dto.setLastMonthlyPayment(objs[2].toString());            
+            dto.setPreviousAnnuityDate(objs[3].toString());
+            dto.setActive(objs[4].toString());
+            dto.setEnrollmentInTheCurrentMonth(objs[5].toString());
+            dto.setContractMonth(objs[6].toString());
+            dto.setEnrollment(objs[7].toString());   
+            dto.setIntLastMonthlyPayment(Integer.parseInt(objs[9].toString()));
+            dto.setIntPreviousAnnuityDate(Integer.parseInt(objs[10].toString()));
+            listDto.add(dto); 
+            countAll++;
+        }
+//        logger.debug("NAME:" + dto.getName()+ ", getStudentID:" + dto.getStudentID() + ", getLastMonthlyPayment:" + dto.getLastMonthlyPayment()+" dto.getPreviousAnnuityDate:"+dto.getPreviousAnnuityDate()+" dto.getActive:"+dto.getActive()+" dto.getEnrollmentInTheCurrentMonth"+dto.getEnrollmentInTheCurrentMonth()+" dto.getContractMonth:"+dto.getContractMonth()+" dto.getEnrollment:"+dto.getEnrollment()+" getIntLastMonthlyPayment:"+dto.getIntLastMonthlyPayment());	
+        }
+        logger.debug("YES_ES ACTIVE COUNT:"+countActive);
+        logger.debug("NO_ES INACTIVE COUNT:"+countNotActive);
+        logger.debug("ALL COUNT:"+countAll); 
        return listDto;
     }
     /**
@@ -457,9 +484,10 @@ public class ReportsService extends ParentControllerService{
     */
     private FootDTO getStateStudentAccount(){
        FootDTO food= new FootDTO();
-       Query query = entityManagerFact.getObject().createEntityManager().createNamedQuery(SQL_STATE_STUDENTS_FOOD);
-       Object obj = query.getSingleResult();
-       food.setActive(obj.toString());
+       	Integer count =countActive+countNotActive+countAll;
+       logger.debug("getStateStudentAccount count:" + count);
+       
+       food.setActive(count.toString());
        return food;   
     }
    /**

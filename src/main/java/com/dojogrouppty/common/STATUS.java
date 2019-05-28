@@ -10,10 +10,10 @@ package com.dojogrouppty.common;
  * @author lrodriguezn
  */
 public enum STATUS {
-    PENDING((short)0),
-    ACTIVE((short)1),
-    INACTIVE((short)2),
-    DELETED((short)3);
+	ALL_STUDENTS(new Short((short)0)),
+    ACTIVE(new Short((short)1)),
+    INACTIVE(new Short((short)2)),
+    DELETED(new Short((short)3));
     private Short v;
     STATUS(short v){
         this.v=v;
@@ -21,4 +21,7 @@ public enum STATUS {
   public  Short getStatus(){
      return this.v;
     }
+  public String getString() {
+	  return this.v.toString();
+  }
 }

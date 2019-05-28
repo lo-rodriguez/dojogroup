@@ -69,6 +69,9 @@
             <script type="text/javascript" src="" th:src="@{/resources/js/jszip.min.js}"></script>
             <script type="text/javascript" src="" th:src="@{/resources/js/buttons.html5.min.js}"></script>
             <script type="text/javascript" src="" th:src="@{/resources/js/buttons.print.min.js}"></script>
+            <!-- Incluimos nuevas librerias desde www para nuevas funcionalidades -->
+            <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/absolute.js"></script>
+            
             <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
             <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
             <!--[if lt IE 9]>
@@ -77,10 +80,34 @@
             <![endif]-->
         </head>
         <style>
-			.hide {
-				display: none;
-			}
-		</style>
+.hide {
+	display: none;
+}
+
+.hide2 {
+	color: transparent;
+}
+
+.subtotal {
+	backgroundColor: "#e6f9ff";
+	fontWeight: "bolder";
+}
+
+.group {
+	background-color: #333 !important;
+	font-size: 11px;
+	color: #fff !important;
+	opacity: 0.7;
+}
+
+th {
+	font-size: 10px;
+}
+
+td {
+	font-size: 9px;
+}
+</style>
         <body>
 
             <div id="wrapper">
@@ -149,10 +176,10 @@
                                                 </div>
                                                 <script th:inline="javascript"  type="text/javascript">
                                                             $(function () {
-                                                            $('#datePayIni').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${initialDate}]]*/));
+                                                            $('#datePayIni').datetimepicker({locale: 'es',format: 'DD/MM/YYYY'}).data("DateTimePicker").date(new Date(/*[[${initialDate}]]*/));
                                                             });
                                                             $(function () {
-                                                            $('#datePayEnd').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${finalDate}]]*/));
+                                                            $('#datePayEnd').datetimepicker({locale: 'es',format: 'DD/MM/YYYY'}).data("DateTimePicker").date(new Date(/*[[${finalDate}]]*/));
                                                             });                                               
                                               </script>   
                                             </th:block>
@@ -198,10 +225,20 @@
                                                         </option>  		
                                                     </select>                                             
                                                 </div>
+                                            </th:block> 
+                                            <th:block th:if="${activeStateStudent== true}">
+                                                    <div class="col-md-4 mb-1">
+                                                    <label th:text="#{dashboard.report.stateStudentAccount.filter.active}">Seleccione activo</label>                                                  
+                                                    <select class="form-control"  id="active"     name="active">
+                                                        <option value="0"> -- </option>
+                                                        <option th:each="entry : ${status.entrySet()}"   th:value="${entry.key}" th:utext="${entry.value}" th:field="*{active}" />
+                                                    </select>
+                                                </div>    
                                             </th:block>      
                                         </div> 
                                         <div class="panel-body">
-                                            <div class="row">                                   
+                                            <div class="row">   
+                                                                    
                                                 <div class="col-md-4 mb-1">
                                                     <button type="submit" class="btn btn-outline btn-primary" th:text="#{dashboard.report.generic.search.button}">                                             
                                                     </button><span class="glyphicon glyphicon-search" ></span>                                                                               
@@ -245,6 +282,7 @@
                                                                 <p class="card-text" th:text="${profileStudent.category}">Category.</p>                                                
                                                                 <p class="card-text" th:text="${profileStudent.telephone}">Telephone</p>
                                                                 <p class="card-text" th:text="${profileStudent.registrationDate}">Telephone</p>
+                                                                <a href="#" class="stretched-link" th:text="#{report.paymentHistory.Link}"  th:href="@{${searchStudentAction}(idStudent=${reportForm.idStudent})}">Go Detail</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -280,39 +318,72 @@
                 </th:block>
             </div>
             <script th:inline="javascript"  type="text/javascript">
-                var rowCount = $('#dataTables-report tr').length;               
-                console.log('rowCount:' + rowCount);               
+                var rowCount = $('#dataTables-report tr').length;                      	           
+                console.log('rowCount:' + rowCount);                              
 				var numCols = $("#dataTables-report").find('tr')[0].cells.length;		
+				var nameReport= /*[[${reportHeaderDTO.namefile}]]*/
+                var colum1Ord=false  ;     
+                var colum2Ord=false  ;
+                var colum3Ord=false  ;
+                var colum4Ord=false  ;
+                var colum5Ord=false  ;
+                var colum6Ord=false  ;
+                var colum7Ord=false  ;
+                var group=false  ;
+                var pageLength = 10; 	
+                var substr=nameReport.substring(0, 9)	
 				console.log('numCols: ' + numCols);
-                $(document).ready(function () {
+				console.log('nameReport: ['+nameReport+']');
+				var table =null;
+                $(document).ready(function () {                  
                 if (rowCount > 1){
-                $('#dataTables-report').DataTable({                	
+                initDataTables();   
+                table =   $('#dataTables-report').DataTable({    
+                	"pageLength": pageLength,              	 	
                 	 columnDefs: [ {
                          targets: [ 0 ],
-                         orderData: [ 0, 2,4],
-                         orderable: true                    
+                         orderData: [ 0],
+                         orderable: colum1Ord                    
                      }, {
                          targets: [ 1 ],
-                         orderable: false
+                         orderable: colum2Ord
                      }, {
                          targets: [ 2 ],
-                         orderData: [ 0, 2,5 ],
-                     	 orderable: true,
+                         orderData: [ 2],                         
+                         type:'any-number',
+                     	 orderable: colum3Ord,
                      },
                      {
                          targets: [ 3 ],
-                         orderable: false
-                     },
-                     {
-                         targets: [ 4 ],
-                         orderable: false
-                     }  ,
-                     {
-                         targets: [ 5 ],
-                         orderable: false
-                     }    ],
-                     "aaSorting": [ [0,'desc'], [2,'asc'] ],     
-                responsive: true,              
+                         orderable: colum4Ord
+                     }   ],
+                     "aaSorting": [ [0,'desc']],   
+                     rowGroup: {
+                    	 enable: group,
+                    	 startClassName: 'table-start-group',                    	 
+                    	 endRender: function ( rows, group ) {
+                        	 if( nameReport =='Informe Administrativo'){
+                        		 var mount = rows
+                                 .data()
+                                 .pluck(6)
+                                 .reduce( function (a, b) {
+                                     return a + b*1;
+                                 }, 0) ;
+                  
+                           var subtotal = parseFloat(mount);
+                           var textSubTotal =subtotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');  
+                  			 console.log('subtotal:'+subtotal);
+                  			console.log('textSubTotal:'+subtotal);
+                             return $('<tr/>')
+                                 .append( '<td colspan="6" class="text-primary" >Monto al: '+group+'</td>' )
+                                 .append( '<td class="text-primary">$'+textSubTotal+'</td>' )                               
+                                 ;
+                            }
+                            
+                        },
+                         dataSrc:0
+                         },  
+               		 responsive: true,              
                         "language": {
                         "decimal": "",
                                 "emptyTable": "No hay datos de estudiante..",
@@ -339,11 +410,13 @@
                         }
                 ,
                         "createdRow": function (row, data, index) {
-                        var $tds = $('#dataTables-report tr > td:nth-child(5)').filter(function () {
+                       
+                        var $tds = $('#dataTables-report tr > td:nth-child(6)').filter(function () {
                         return $.trim($(this).text());
                         });
+                        
                                 if ($tds.length > 0) {
-                        if (data[6].startsWith("$", 0)){
+                        if (data.length> 6 && data[6].startsWith("$", 0)){
                         $('td', row).eq(6).addClass('highlight');
                                 $("tr:last").css({ backgroundColor: "#e6f9ff", fontWeight: "bolder" });
                         }
@@ -353,64 +426,95 @@
                         buttons: [
                         { extend: 'excelHtml5',   exportOptions: {
                             format: {
-                                body: function ( data, row, column, node ) {   
-                                	 if(numCols==7 && column == 0 ){
+                                body: function ( data, row, column, node ) {                            
+                                	 if(numCols==7 && column == 0 && nameReport!='Informe Administrativo'  ){
                                   	   data =  processNameStudent(data);
-                                      }                                                                                                      
-                                	var indexOfFirst = data.indexOf('</span>');                                 	                                                                                      	                                                	                          
-                                	 if(numCols==7 && (column >0 && column <3)){                                 	                                    
+                                      }   
+                              	var indexOfFirst = data.indexOf('</span>');                                 	                                	                                                                                      	                                                	                          
+                                	 if(numCols==7 && (column >0 && column <3) && ( nameReport!='Informe Administrativo' && nameReport!= 'Informe para descarga' && substr != 'Historial') ){   
+                                		 console.log(' 1 row:['+row+'] column:['+column+'] data:['+data+']');                               	                                    
                                      	return processDate(data);
-                                     }                                    
-                                    else if(numCols<7 && column ==0 && indexOfFirst>0){                                    
+                                     }  
+                                	 else if(numCols==7 && column == 0 &&( nameReport=='Informe Administrativo' || nameReport== 'Informe para descarga' || substr == 'Historial')) {   
+                                		 console.log(' 2 row:['+row+'] column:['+column+']data:['+data+']');                                   
+                                         return processDate(data);
+                                        }                                   
+                                    else if(numCols<7 && column ==0 && indexOfFirst>0 && nameReport!='Informe Administrativo' ){  
+                                    	console.log(' 3 row:['+row+'] column:['+column+'] data:['+data+']');                                      
                                      return processDate(data);
-                                    }
-                                    else 
+                                    }                                 
+                                	 console.log('4 row:['+row+'] column:['+column+'] data:['+data+']');  
                                     return data;                                                                                                            
                                 }
                             }
-                        }, footer: true, title: /*[[${reportHeaderDTO.title}]]*/, filename:/*[[${reportHeaderDTO.namefile}]]*/ },
+                        }, footer: true, title: /*[[${reportHeaderDTO.title}]]*/, filename:nameReport },
                         { extend: 'csvHtml5',  exportOptions: {
                             format: {
-                                body: function ( data, row, column, node ) { 
-                                	 if(numCols==7 && column == 0 ){
-                                    	data =  processNameStudent(data);
-                                     }  
-                                	var indexOfFirst = data.indexOf('</span>');                                  	                                                    	                                                	                             
-                                	 if(numCols==7 && (column >0 && column <3)){                                     
-                                     	return processDate(data);
-                                     }                                    
-                                    else if(numCols<7 && column ==0 && indexOfFirst>0){
-                                     return processDate(data);
-                                    }
-                                    else 
-                                    return data;                                                                                                            
+                                body:  function ( data, row, column, node ) {   
+                               	 if(numCols==7 && column == 0 && nameReport!='Informe Administrativo'  ){
+                                	   data =  processNameStudent(data);
+                                    }                                                                                                      
+                              	var indexOfFirst = data.indexOf('</span>');                                 	                                  	                                                                                      	                                                	                          
+                              	 if(numCols==7 && (column >0 && column <3) && ( nameReport=='Informe Administrativo' || nameReport== 'Informe para descarga') ){                                 	                                    
+                                   	return processDate(data);
+                                   }  
+                              	 else if(numCols==7 && column == 0 &&( nameReport=='Informe Administrativo' || nameReport== 'Informe para descarga')) {                                    
+                                       return processDate(data);
+                                      }                                   
+                                  else if(numCols<7 && column ==0 && indexOfFirst>0 && nameReport!='Informe Administrativo' ){                                    
+                                   return processDate(data);
+                                  }
+                                  else 
+                                  return data;                                                                                                          
                                 }
                             }
                         },footer: true, filename:/*[[${reportHeaderDTO.namefile}]]*/ }
                         ]
                 });
-                }
+                }               
                 });
+                $('#dataTables-report').on('click', 'tr', function(){                	
+                	console.log('click');
+                })
                 function processDate(data){
                 	data=data.replace('<span class="hide">','');
                 	data=data.replace('</span><span>','');
                 	data=data.replace('</span>','');                                    	
                 	data=data.replace(/^([0-9]{4}[-/]?((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))|([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00)[-/]?02[-/]?29)/,'');
                 	var nData =null;
-                	var arrayOfStrings = data.split('/');
+                	/*var arrayOfStrings = data.split('/');
                 	if(arrayOfStrings.length == 1){                                    
                 		return '';
                     }
                 	else{                                   
-                		nData = moment(data, 'DD/MM/YYYY');
+                		nData = moment(data, 'DD/MMM/YYYY');
                     }
-                	return nData.local().format('DD/MM/YYYY');
+                	return nData.local().format('DD/MMM/YYYY');
+                	*/
+                	return data;
                     }
                 function processNameStudent(data){
                 	data=data.replace(/<[^>]*>/,''); 
                 	data=data.replace('</a>','');   
                 	return data;
-                 }                                   
+                 }  
+                function initDataTables(){
+                	if( nameReport=='Informe Administrativo'){
+                		colum1Ord=true  ;
+                		pageLength = 8;
+                		group=true;
+                    	}
+                	else{
+                		console.log('Else..' );
+                		colum1Ord=true  ;     
+                        colum2Ord=true  ;
+                        colum3Ord=true  ;
+                        colum4Ord=true  ;
+                        colum5Ord=true  ;
+                      	colum6Ord=true  ;
+                	
+                    }
+                    }                                 
             </script>
         </body>   
     </html>

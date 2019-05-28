@@ -8,14 +8,17 @@ package com.dojogrouppty.catalogs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.Query;
+import javax.transaction.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Sort;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.dojogrouppty.common.ParentControllerService;
+import com.dojogrouppty.common.STATUS;
 
 /**
  *
@@ -39,6 +43,8 @@ public class CatalogsService  extends ParentControllerService {
     private static Map <Long,String> allCodes; 
     @Autowired
     private LocalContainerEntityManagerFactoryBean entityManagerFact;
+    @Autowired
+    private MessageSource messageSource;
     private static List <SystemCodes> listCodes = new ArrayList<SystemCodes>(); 
     /**
      * list of cod by group
@@ -109,5 +115,12 @@ public class CatalogsService  extends ParentControllerService {
         	   map.put(Integer.parseInt(objs[0].toString ()),objs[1].toString ());
            }
         return map;
+    }
+    
+    public  Map <Short,String> getStatus(){
+    	Map <Short,String> map= new HashMap<>();
+    	map.put(STATUS.ACTIVE.getStatus(),  messageSource.getMessage(MESSAGE_ACTIVE, null, Locale.getDefault()));
+    	map.put(STATUS.INACTIVE.getStatus(),  messageSource.getMessage(MESSAGE_INACTIVE, null, Locale.getDefault()));
+    	return map;
     }
 }

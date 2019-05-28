@@ -181,24 +181,52 @@ public class StudentController extends ParentControllerService {
     String edittudent(Model model, @RequestParam("idStudent") long id) throws IOException {
         try {
             logger.debug("Into  edittudent with id=%d", id);
-            StudentForm form = studentService.loadFormStudent(id);
-            model.addAttribute(REGISTRATION_DATE_ATRIBUTE,messageSource.getMessage(REGISTRATION_DATE, null, Locale.getDefault()).replace("%s", form.getDayOfIncome()));
-            model.addAttribute(FORM_ACCION, ACCION_EDIT_STUDENT);
-            model.addAttribute(SHOW_IMAGE, Boolean.FALSE);
-            model.addAttribute(_MODULE, MODULES.STUDENT.moduleOption());
-            model.addAttribute(STUDENT_FORM_OBJ, form);
-            model.addAttribute(DISABLED__, DISABLED.ENABLED.getValue());
-            model.addAttribute(EDIT_MODE_STUDENT, Boolean.TRUE);
-            model.addAttribute(BIRTHDATE, DateFormat.getInstance().format(new Date()));
-            addCodesModelo(model);
-            if (studentService.savePhoto(form.getData(), id)) {
-                model.addAttribute(SHOW_IMAGE, Boolean.TRUE);
-            }
+            setModel(model,id);
+            addCodesModelo(model);         
             return FORM_STUDENT_VIEW_NAME;
         } catch (GenericBZKException ex) {
             logger.error("Error insert " + ex.getMessage());
             return ERROR_ACTION;
         }
+    }
+    
+    
+    /**
+     * method student only reading
+     *
+     * @param model
+     * @param id
+     * @return student/formStudent
+     */
+    @RequestMapping(value = "/readOnlyStudent", method = RequestMethod.GET)
+    @Secured({"ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"})        
+    String readOnlyStudent(Model model, @RequestParam("idStudent") long id) throws IOException {
+        try {
+            logger.debug("Into  readOnlyStudent with id=%d", id);           
+            setModel(model,id);
+            model.addAttribute(DISABLED__, DISABLED.DISABLED_OFF.getValue());
+            model.addAttribute(_MODULE, MODULES.REPORTS.moduleOption());
+            addCodesModelo(model);        
+            return FORM_STUDENT_VIEW_NAME;
+        } catch (GenericBZKException ex) {
+            logger.error("Error insert " + ex.getMessage());
+            return ERROR_ACTION;
+        }
+    }
+    
+    private void setModel(Model model,long id) throws GenericBZKException, IOException {
+    	 StudentForm form = studentService.loadFormStudent(id);
+         model.addAttribute(REGISTRATION_DATE_ATRIBUTE,messageSource.getMessage(REGISTRATION_DATE, null, Locale.getDefault()).replace("%s", form.getDayOfIncome()));
+         model.addAttribute(FORM_ACCION, ACCION_EDIT_STUDENT);
+         model.addAttribute(SHOW_IMAGE, Boolean.FALSE);
+         model.addAttribute(_MODULE, MODULES.STUDENT.moduleOption());
+         model.addAttribute(STUDENT_FORM_OBJ, form);
+         model.addAttribute(DISABLED__, DISABLED.ENABLED.getValue());
+         model.addAttribute(EDIT_MODE_STUDENT, Boolean.TRUE);
+         model.addAttribute(BIRTHDATE, DateFormat.getInstance().format(new Date()));
+         if (studentService.savePhoto(form.getData(), id)) {
+             model.addAttribute(SHOW_IMAGE, Boolean.TRUE);
+         }
     }
 
     @RequestMapping(value = "/editstudent", method = RequestMethod.POST)

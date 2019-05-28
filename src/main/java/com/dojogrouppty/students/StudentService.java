@@ -154,8 +154,7 @@ public class StudentService extends ParentControllerService {
                         append(array[1].toString()).
                         append(",").append(array[2].toString()).
                         append(",").
-                        append(array[3].toString()).
-                        append("(").append(array[4].toString()).append(")").toString();
+                        append(array[3].toString()).toString();
                 dto.setDescription(description);
                 listDto.add(dto);
                 logger.debug("ID:[" + dto.getId() + "] "

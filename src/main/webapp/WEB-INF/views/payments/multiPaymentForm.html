@@ -412,7 +412,7 @@
             );
     }
     $(function () {
-        $('#datePay').datetimepicker({locale: 'es'}).data("DateTimePicker").date(new Date(/*[[${payDate}]]*/));
+        $('#datePay').datetimepicker({locale: 'es',format: 'DD/MM/YYYY'}).data("DateTimePicker").date(new Date(/*[[${payDate}]]*/));
          document.getElementById('download').style.visibility = 'hidden';
     });
     function loadPriceUnit() {

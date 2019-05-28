@@ -88,6 +88,7 @@ public class ParentControllerService {
 	protected final static String EDIT_MODE_STUDENT = "editModeStudent";
 	protected final static String PAYMENT_MODE_STUDENT = "paymentModeStudent";
 	protected final static String ACCION_EDIT_STUDENT = "/editstudent";
+	protected final static String ACCION_READONLY_STUDENT = "/readOnlyStudent";
 	protected final static String ACCION_ADD_STUDENT = "/addstudent";
 	protected final static String ACCION_PRODUCTS = "/productsMaintenance";
 	protected final static String ACCION_PRODUCTS_ADD = "/productsMaintenance";
@@ -189,6 +190,7 @@ public class ParentControllerService {
 	protected static final String SQL_PAYMENT_HISTORY_BY_STUDENT_CARD = "SQL011";
 	protected static final String SQL_CHART_TYPES_PAYMENT_VS_YEARS = "SQL013";
 	protected static final String SQL_GET_TYPES_PRODUCTS = "SQL014";
+	protected static final String SQL_STATE_STUDENTS_FOOD_NOT_ACTIVE="SQL015";
 
 	protected static final String DESCPTION_STUDENTS = "descriptionStudents";
 	protected static final String REPORT_OPTION = "reportOp";
@@ -210,10 +212,12 @@ public class ParentControllerService {
 	protected static final String ACTIVATE_TYPE_PAYMEN_RECEIPTS = "activateTypePayMentRecipts";
 	protected static final String ACTIVATE_TYPE_PRODUCT = "activeProducts";
 	protected static final String ACTIVATE_PAYMENT_HISTORY_STUDENT = "activePaymentHistoryStudent";
+	protected static final String ACTIVATE_STATE_STUDENT = "activeStateStudent";
 	protected static final String REPORT_DETAIL_LIST = "reportDetailListtDto";
 	protected static final String REPORT_FOOD_LIST = "reportFoodListDto";
 	protected static final String REPORT_HEAD = "reportHeaderDTO";
 	protected static final String REPORT_FOOD = "reportFood";
+	protected static final String STATES_STUDENTS_ACCOUNT="stateStudentAccount";
 	protected static final String EMPTY_LIST = "message.report.emptyList";
 	protected static final String NAME_RECEIPTS = "dashboard.report.receiptsReport";
 	protected static final String TITLE_RECEIPTS = "report.receiptsReport.title";
@@ -227,12 +231,18 @@ public class ParentControllerService {
 	protected static final String TITLE_STUDENTS_REPORT = "report.stateStudentAccount.reportOfTheStateStudentAccount.title";
 	protected static final String TOTAL_PER_DAY = "report.administrativeReport.totalPerDay";
 	protected static final String PROFILE_STUDENT = "profileStudent";
+	
+	protected static final String MESSAGE_ACTIVE="dashboard.report.stateStudentAccount.active";
+	protected static final String MESSAGE_INACTIVE=	"dashboard.report.stateStudentAccount.inactive";
+	protected static final String MAP_STATUS="status";
 
 	protected static final String CATEGORY = "report.profile.category";
 	protected static final String DOC_ID = "report.profile.docId";
 	protected static final String TELEPHONE = "report.profile.telephone";
 	protected static final String EMAIL = "report.profile.mail";
 	protected static final String REGISTRATION_DATE_PROFILE = "report.profile.registrationDate";
+	protected static final String YES_ES="SI";
+	protected static final String NO_ES="NO";
 	/*
 	 * About BZK
 	 */

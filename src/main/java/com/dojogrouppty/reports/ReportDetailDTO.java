@@ -12,6 +12,7 @@ package com.dojogrouppty.reports;
 public class ReportDetailDTO {
   private  String date;
   private Integer intDate;
+  private Long longDate;
   private  String name;
   private  String number;
   private  String product;
@@ -20,6 +21,7 @@ public class ReportDetailDTO {
   private  String totalPerDay;
   private  String dateSubTotal;
   private String comment; 
+  private Long dateOrder;
 
     public ReportDetailDTO() {
         this.date = "";
@@ -31,6 +33,7 @@ public class ReportDetailDTO {
         this.dateSubTotal  = "";
         this.comment="";
         this.intDate=0;
+        this.dateOrder=0L;
     }
 
     public String getDateSubTotal() {
@@ -114,6 +117,22 @@ public class ReportDetailDTO {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public Long getDateOrder() {
+		return dateOrder;
+	}
+
+	public void setDateOrder(Long dateOrder) {
+		this.dateOrder = dateOrder;
+	}
+
+	public Long getLongDate() {
+		return longDate;
+	}
+
+	public void setLongDate(Long longDate) {
+		this.longDate = longDate;
 	}
     
     

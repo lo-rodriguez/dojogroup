@@ -15,6 +15,7 @@ public class ReportForm {
    private Integer idStudent;
    private String typeProduct;
    private String typePayment;
+   private String active;
    private  String initialReceipt;
    private String finalReceipt;
    
@@ -84,5 +85,13 @@ public class ReportForm {
     public void setFinalReceipt(String finalReceipt) {
         this.finalReceipt = finalReceipt;
     }
+
+	public String getActive() {
+		return active;
+	}
+
+	public void setActive(String active) {
+		this.active = active;
+	}
     
 }

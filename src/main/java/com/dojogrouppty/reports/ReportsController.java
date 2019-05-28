@@ -7,6 +7,7 @@ package com.dojogrouppty.reports;
 
 import com.dojogrouppty.catalogs.CatalogsService;
 import com.dojogrouppty.common.DateUtils;
+import com.dojogrouppty.common.MODULES;
 import com.dojogrouppty.common.ParentControllerService;
 import com.dojogrouppty.common.REPORTS_OPTION;
 import com.dojogrouppty.error.GenericBZKException;
@@ -85,10 +86,16 @@ public class ReportsController extends ParentControllerService {
             case REPORT_FOR_DOWNLOAD:
                 model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
                 model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
+                model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
                 model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(DateUtils.addDay(DEFAULT_DAYS_FOR_SEARCH)));
                 model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(new Date()));
                 model.addAttribute(PRODUCTS, productsService.getActiveProducts());
                 break;
+            case STATE_STUDENT_ACCOUNT:
+            	model.addAttribute(MAP_STATUS,catalogsService.getStatus());
+            	 model.addAttribute(ACTIVATE_STATE_STUDENT, Boolean.TRUE);
+            	break;
+            
 		default:
 			break;
         }
@@ -145,9 +152,7 @@ public class ReportsController extends ParentControllerService {
             model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
             try {
                 model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
-                model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
-                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
+                model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));              
                 model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
                 map = reportsService.administrativeReport(reportForm);
                 if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
@@ -170,6 +175,8 @@ public class ReportsController extends ParentControllerService {
                 model.addAttribute(ACTIVATE_PAYMENT_HISTORY_STUDENT, Boolean.TRUE);
                 model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
                 model.addAttribute(PRODUCTS, productsService.getActiveProducts());
+                model.addAttribute(SEARCH_STUDENT_ACCION, ACCION_READONLY_STUDENT);
+                model.addAttribute(_MODULE, MODULES.REPORTS.moduleOption());
                 model.addAttribute(DESCPTION_STUDENTS, studentService.getDescriptionStudentDTO(idStudent));
                 map = reportsService.paymentHistoryByStudent(reportForm);
                 if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
@@ -204,7 +211,7 @@ public class ReportsController extends ParentControllerService {
             model.addAttribute(ACTIVATE_DATES_RANGES, Boolean.TRUE);
             model.addAttribute(ACTIVATE_TYPE_PRODUCT, Boolean.TRUE);
             model.addAttribute(PRODUCTS, productsService.getActiveProducts());
-
+            model.addAttribute(TYPES_PAYMENTS, catalogsService.getSystemCodesByGroup(PAYMENTS));
             try {
                 model.addAttribute(INITIAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getInitialDate())));
                 model.addAttribute(FINAL_DATE, DateFormat.getInstance().format(dateformat.parse(reportForm.getFinalDate())));
@@ -223,6 +230,8 @@ public class ReportsController extends ParentControllerService {
             break;
         case STATE_STUDENT_ACCOUNT:
             try {
+            	model.addAttribute(MAP_STATUS,catalogsService.getStatus());
+           	 	model.addAttribute(ACTIVATE_STATE_STUDENT, Boolean.TRUE);
                 map = reportsService.stateStudentAccount(reportForm);
                 model.addAttribute(SEARCH_STUDENT_ACCION, ACCION_REPORT_HISTORY_BY_STUDENT_ID);
                 if (map.containsKey(GENERAL_MODAL_MESSAGE)) {
@@ -232,6 +241,7 @@ public class ReportsController extends ParentControllerService {
                     model.addAttribute(REPORT_FOOD, map.get(REPORT_FOOD));
                     model.addAttribute(REPORT_HEAD, map.get(REPORT_HEAD));
                 }
+                model.addAttribute(STATES_STUDENTS_ACCOUNT, map.get(STATES_STUDENTS_ACCOUNT));
             } catch (GenericBZKException e) {
                 logger.error("Error generar el informe, e: " + e.getMessage());
                 return ERROR_ACTION;

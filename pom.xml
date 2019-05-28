@@ -5,7 +5,7 @@
 	<groupId>dojogrouppty</groupId>
 	<artifactId>appBZK</artifactId>
 	<packaging>war</packaging>
-	<version>KJM</version>
+	<version>KJM-SHOTOKAN</version>
 	<name>SYS BZK</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -272,8 +272,8 @@
 						<FILE_SIZE_THRESHOLD>0</FILE_SIZE_THRESHOLD>
 					</systemProperties>
 					<path>bzk</path>
-					<!-- <port>8088</port> -->
-					<port>80</port>
+					<port>8088</port>
+					<!-- <port>80</port> -->
 					<!-- <systemPropertyVariables> <LOCATION_PHOTO>D:/workspace/appBZK/photo/</LOCATION_PHOTO> 
 						<MAX_FILE_SIZE>5242880L</MAX_FILE_SIZE> <MAX_REQUEST_SIZE>20971520L</MAX_REQUEST_SIZE> 
 						<FILE_SIZE_THRESHOLD>0</FILE_SIZE_THRESHOLD> <buildDirectory>${project.build.directory}</buildDirectory> 
